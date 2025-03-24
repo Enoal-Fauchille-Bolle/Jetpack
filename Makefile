@@ -73,4 +73,3 @@ coverage: unit_tests
 	gcovr --exclude tests/
 	gcovr --exclude tests/ --txt-metric branch
 	rm $(NAME_TEST)
-
