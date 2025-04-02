@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "sqlite3.h": "c",
+        "in.h": "c",
+        "iostream": "cpp",
+        "system_error": "cpp",
+        "*.tcc": "cpp",
+        "iosfwd": "cpp"
+    }
+}
