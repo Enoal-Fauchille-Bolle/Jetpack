@@ -11,7 +11,8 @@
 - [Response Types](#response-types)
   - [`ID` - Responses (🕹️ Client)](#id---responses-️-client)
   - [`MAP` - Responses (🕹️ Client)](#map---responses-️-client)
-  - [`READY` 🕹️ - Responses (🖥️ Server)](#ready-️---responses-️-server)
+  - [`READY` - Responses (🖥️ Server)](#ready---responses-️-server)
+  - [`LOBBY` - Responses (🕹️ Client)](#lobby---responses-️-client)
   - [`START` - Responses (🕹️ Client)](#start---responses-️-client)
   - [`PLAYER` - Responses (🕹️ Client)](#player---responses-️-client)
   - [`FLY` - Responses (🖥️ Server)](#fly---responses-️-server)
@@ -66,6 +67,7 @@ ERROR Character not recognized: 'p'
 | **`ID`** | `<player_id>` | Sends to the Client its **ID**<br>`<player_id> uint`: The **ID** of the Client chosen by the Server | 🖥️ Server |
 | **`MAP`** | `<length> <raw_map>` | Sends the **map** to the Client<br>`<length> uint`: Length of the **map** (width)<br>`<raw_map> raw_map`: [Raw map](#raw-map) of the **map** | 🖥️ Server |
 | **`READY`** | *None* | Sends to the Server that the Client is **ready** | 🕹️ Client |
+| **`LOBBY`** | `<players>` `<ready_players>` | Sends to the Client the lobby informations<br>`<players>`: Comma-separated **IDs** of the players in the lobby<br>`<ready_players>`: Comma-separated **IDs** of the players in the lobby that are ready | 🖥️ Server |
 | **`START`** | *None* | Sends to the Client that the **game starts**  | 🖥️ Server |
 | **`PLAYER`**  | `<player_id> <pos_x> <pos_y> <score> <fly_status>` | Sends to the Client the updates of a **player**<br>`<player_id> uint`: The **ID** of the **player**<br>`<pos_x> ufloat`: The `x` coordinate of the **player**<br>`<pos_y> ufloat`: The `y` coordinate of the **player**<br>`<score> uint`: The number of coins the **player** has<br>`<fly_status> fly_status`: The [Fly Status](#fly-status) of the **player** | 🖥️ Server |
 | **`FLY`**  | `<fly_status>` | Sends to the Server that the Client want to change **Fly Status**<br>`<fly_status> fly_status`: [Fly Status](#fly-status) | 🕹️ Client |
@@ -87,7 +89,7 @@ The **map** should have a static height of **10**, but the length of the map is 
 
 Here is an example of a **map** file:
 
-```diff
+```
 ____________________________e__________________________________________________________________
 ____________________________e______cccccc______________________________________________________
 ____________________________e_____ccccccc________________________eeeeeeeeeeee__________________
@@ -141,10 +143,10 @@ The way to convert a map into a **raw map** is easy, just remove the **new lines
 | **Type** | **Message** | **Meaning** |
 | --- | --- | --- |
 | **`OK`** | *None* | The **Client** correctly parsed and interpreted the **Length** and the **Map** |
-| **`ERROR`** | `Character not recognized: ‘<char>’` | The **Map** includes an unknown character that is not part of the [objects list](#map) |
+| **`ERROR`** | `Character not recognized: ‘<char>'` | The **Map** includes an unknown character that is not part of the [objects list](#map) |
 | **`ERROR`** | `Map length mismatch` | The **Map** received does not match the **Length** provided |
 
-## `READY` 🕹️ - Responses (🖥️ Server)
+## `READY` - Responses (🖥️ Server)
 
 | **Type** | **Message** | **Meaning** |
 | --- | --- | --- |
@@ -152,19 +154,28 @@ The way to convert a map into a **raw map** is easy, just remove the **new lines
 | **`ERROR`** | `Already ready` | The **Server** already registered that the **Client** is ready |
 | **`ERROR`** | `Not accepting ready now` | The **Server** is not waiting for clients, means that the game already started or is already finished |
 
+## `LOBBY` - Responses (🕹️ Client)
+
+| **Type** | **Message** | **Meaning** |
+| --- | --- | --- |
+| **`OK`** | *None* | The **Client** successfully updated the lobby informations |
+| **`ERROR`** | `Invalid list of players` | The **Client** catched an error while parsing or interpreting the **list of players** |
+| **`ERROR`** | `Invalid list of ready players` | The **Client** catched an error while parsing or interpreting the **list of players** that are **ready** |
+| **`ERROR`** | `Lobby command unexpected` | The **Client** is currently not in a lobby |
+
 ## `START` - Responses (🕹️ Client)
 
 | **Type** | **Message** | **Meaning** |
 | --- | --- | --- |
 | **`OK`** | *None* | The **Client** successfully started the **Game** |
-| **`ERROR`** | `Start command unexpected` | The **Client** isn’t ready to start the **Game** |
+| **`ERROR`** | `Start command unexpected` | The **Client** isn't ready to start the **Game** |
 
 ## `PLAYER` - Responses (🕹️ Client)
 
 | **Type** | **Message** | **Meaning** |
 | --- | --- | --- |
 | **`OK`** | *None* | The **Client** correctly parsed and interpreted the updated **player data** |
-| **`ERROR`** | `Invalid number of data` | The number **datas** received isn’t the one expected |
+| **`ERROR`** | `Invalid number of data` | The number **datas** received isn't the one expected |
 | **`ERROR`** | `Invalid player ID` | The **Player ID** received is not a number |
 | **`ERROR`** | `Unknown player ID` | The **Player ID** received is not associated with a **Player** |
 | **`ERROR`** | `Invalid x coordinate` | The **Client** catched an error while parsing or interpreting the **x coordinate** |
@@ -185,7 +196,7 @@ The way to convert a map into a **raw map** is easy, just remove the **new lines
 | **Type** | **Message** | **Meaning** |
 | --- | --- | --- |
 | **`OK`** | *None* | The **Client** correctly parsed, interpreted and updated the **Coin** of the **Player** |
-| **`ERROR`** | `Invalid number of data` | The number **datas** received isn’t the one expected |
+| **`ERROR`** | `Invalid number of data` | The number **datas** received isn't the one expected |
 | **`ERROR`** | `Invalid player ID` | The **Player ID** received is not a number |
 | **`ERROR`** | `Unknown player ID` | The **Player ID** received is not associated with a **Player** |
 | **`ERROR`** | `Invalid x coordinate` | The **Client** catched an error while parsing or interpreting the **x coordinate** |
@@ -208,6 +219,8 @@ Here is an example of the interaction between **1 Server** and **1 Client**:
 [SERVER] "ID 1"
 [CLIENT] "OK"
 [SERVER] "MAP 95 _________..."
+[CLIENT] "OK"
+[SERVER] "LOBBY 1,2 1"
 [CLIENT] "OK"
 [CLIENT] "READY"
 [SERVER] "OK"
