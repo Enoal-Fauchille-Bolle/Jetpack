@@ -15,11 +15,10 @@ class Map : public IElement {
         Map();
         ~Map();
 
-        void Init(std::string message) override;
-        void Update(float deltaTime) override;
-        void Draw(sf::RenderWindow& window) override;
+        void init(std::string message) override;
+        void update(float deltaTime) override;
+        void draw(sf::RenderWindow& window) override;
         bool isInit() const override;
-
 };
 
 #endif /* !MAP_HPP_ */

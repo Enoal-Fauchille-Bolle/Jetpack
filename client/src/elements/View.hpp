@@ -15,13 +15,13 @@ class View : public IElement {
         View();
         ~View();
 
-        void Init(std::string message) override;
-        void Update(float deltaTime) override;
-        void Draw(sf::RenderWindow& window) override;
+        void init(std::string message) override;
+        void update(float deltaTime) override;
+        void draw(sf::RenderWindow& window) override;
         bool isInit() const override;
 
     private:
-        sf::View view;
+        sf::View _view;
 };
 
 #endif /* !VIEW_HPP_ */

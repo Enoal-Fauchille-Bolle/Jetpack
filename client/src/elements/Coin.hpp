@@ -15,13 +15,10 @@ class Coin : public IElement {
         Coin();
         ~Coin();
 
-        void Init(std::string message) override;
-        void Update(float deltaTime) override;
-        void Draw(sf::RenderWindow& window) override;
+        void init(std::string message) override;
+        void update(float deltaTime) override;
+        void draw(sf::RenderWindow& window) override;
         bool isInit() const override;
-
-    protected:
-    private:
 };
 
 #endif /* !COIN_HPP_ */

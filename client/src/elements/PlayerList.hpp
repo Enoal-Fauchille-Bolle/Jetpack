@@ -16,23 +16,22 @@ class PlayerList : public IElement {
         PlayerList();
         ~PlayerList();
 
-        void Init(std::string message) override;
-        void Update(float deltaTime) override;
-        void Draw(sf::RenderWindow& window) override;
+        void init(std::string message) override;
+        void update(float deltaTime) override;
+        void draw(sf::RenderWindow& window) override;
         bool isInit() const override;
+
     private:
         struct PlayerListData {
             int id;
             bool isClient;
             bool isInit;
 
-            bool operator<(const PlayerListData& other) const {
-                return id < other.id;
-            }
+            bool operator<(const PlayerListData& other) const;
         };
 
-        std::map<PlayerListData, Player> playerList;
-        bool all_init;
+        std::map<PlayerListData, Player> _playerList;
+        bool _isAllInit = false;
 };
 
 #endif /* !PLAYERLIST_HPP_ */
