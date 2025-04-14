@@ -7,12 +7,21 @@
 
 SERVER_DIR	=	server/
 CLIENT_DIR	=	client/
+CLIENT_ELEMENT_DIR	=	elements/
 
 SRC_DIR	=	src/
 
 SRC_SERVER	=	$(SERVER_DIR)$(SRC_DIR)main.c	\
 
 SRC_CLIENT	=	$(CLIENT_DIR)$(SRC_DIR)main.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)Client.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)Game.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)GameManager.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)$(CLIENT_ELEMENT_DIR)Coin.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)$(CLIENT_ELEMENT_DIR)Map.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)$(CLIENT_ELEMENT_DIR)Player.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)$(CLIENT_ELEMENT_DIR)PlayerList.cpp	\
+				$(CLIENT_DIR)$(SRC_DIR)$(CLIENT_ELEMENT_DIR)View.cpp	\
 
 NAME_SERVER	=	jetpack_server
 
@@ -37,6 +46,7 @@ server:	$(OBJ_SERVER)
 
 client:	$(OBJ_CLIENT)
 	g++ -o $(NAME_CLIENT) $(OBJ_CLIENT) $(CFLAGS_CLIENT)	\
+		-lsfml-graphics -lsfml-window -lsfml-system
 
 clean:
 	rm -f $(OBJ_SERVER)
