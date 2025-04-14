@@ -8,30 +8,35 @@
 #ifndef CLIENT_HPP_
     #define CLIENT_HPP_
 
-    #include <string>
-    #include <sys/socket.h>
     #include <arpa/inet.h>
+    #include <fcntl.h>
+    #include <poll.h>
+    #include <sys/socket.h>
+    #include <unistd.h>
 
-    class Client {
-        public:
-            Client() = default;
-            Client(const Client&) = default;
-            Client& operator=(const Client&) = default;
-            Client(Client&&) = default;
-            Client(const char *ip,const char *port);
-            ~Client();
-            std::string get_msg();
-            void send_msg(const std::string& msg);
+    #include <cstring>
+    #include <iostream>
+    #include <string>
 
-        protected:
-        private:
-            int sockfd;
+class Client {
+    public:
+        Client() = default;
+        Client(const Client &) = default;
+        Client &operator=(const Client &) = default;
+        Client(Client &&) = default;
+        Client(const char *ip, const char *port);
+        ~Client();
 
-            struct sockaddr_in serverAddr;
+        std::string getMsg();
+        void sendMsg(const std::string &msg);
 
-            void setNonBlocking(int sockfd);
+    private:
+        void setNonBlocking(int sockfd);
 
-            int flags;
-    };
+        int _sockfd;
+        struct sockaddr_in _serverAddr;
+        int _flags;
+
+};
 
 #endif /* !CLIENT_HPP_ */

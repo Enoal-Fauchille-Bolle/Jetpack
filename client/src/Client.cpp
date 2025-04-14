@@ -1,42 +1,61 @@
 /*
 ** EPITECH PROJECT, 2025
-** $
+** Jetpack
 ** File description:
 ** client
 */
 
 #include "Client.hpp"
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <cstring>
-#include <iostream>
-#include <poll.h>
-#include <fcntl.h>
 
-Client::Client(const char *ip,const char *port) {
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1) {
+/**
+ * @brief Construct a new Client:: Client object
+ *
+ * This function initializes the client by creating a socket and connecting to
+ * the server.
+ *
+ * @param ip The IP address of the server
+ * @param port The port number of the server
+ */
+Client::Client(const char *ip, const char *port)
+{
+    _sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (_sockfd == -1) {
         perror("socket");
         exit(EXIT_FAILURE);
     }
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(std::stoi(port));
-    inet_pton(AF_INET, ip, &serverAddr.sin_addr);
-    if (connect(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
+    _serverAddr.sin_family = AF_INET;
+    _serverAddr.sin_port = htons(std::stoi(port));
+    inet_pton(AF_INET, ip, &_serverAddr.sin_addr);
+    if (connect(_sockfd, (struct sockaddr *)&_serverAddr,
+            sizeof(_serverAddr)) == -1) {
         perror("connect");
-        close(sockfd);
+        close(_sockfd);
         exit(EXIT_FAILURE);
     }
-    setNonBlocking(sockfd);
+    setNonBlocking(_sockfd);
 }
 
-Client::~Client() {
-    close(sockfd);
+/**
+ * @brief Destroy the Client:: Client object
+ *
+ * This function closes the socket when the client object is destroyed.
+ */
+Client::~Client()
+{
+    close(_sockfd);
 }
 
-void Client::setNonBlocking(int sockfd) {
+/**
+ * @brief Set the socket to non-blocking mode
+ *
+ * This function sets the socket to non-blocking mode using fcntl.
+ *
+ * @param sockfd The socket file descriptor
+ */
+void Client::setNonBlocking(int sockfd)
+{
     int flags = fcntl(sockfd, F_GETFL, 0);
+
     if (flags == -1) {
         perror("fcntl F_GETFL");
         exit(EXIT_FAILURE);
@@ -47,19 +66,24 @@ void Client::setNonBlocking(int sockfd) {
     }
 }
 
-std::string Client::get_msg() {
-    struct pollfd fds;
-    fds.fd = sockfd;
-    fds.events = POLLIN;
-    fds.revents = 0;
-
+/**
+ * @brief Get a message from the server
+ *
+ * This function retrieves a message from the server using poll to check for
+ * incoming data.
+ *
+ * @return The message received from the server
+ */
+std::string Client::getMsg()
+{
+    struct pollfd fds = {.fd = _sockfd, .events = POLLIN, .revents = 0};
     int ret = poll(&fds, 1, 0);
 
     std::string message;
     if (ret > 0 && (fds.revents & POLLIN)) {
         char buffer[1024];
         memset(buffer, 0, sizeof(buffer));
-        int bytesRead = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
+        int bytesRead = recv(_sockfd, buffer, sizeof(buffer) - 1, 0);
         if (bytesRead > 0) {
             message = std::string(buffer);
             std::cout << message;
@@ -68,6 +92,14 @@ std::string Client::get_msg() {
     return message;
 }
 
-void Client::send_msg(const std::string& msg) {
-    send(sockfd, msg.c_str(), msg.length(), 0);
+/**
+ * @brief Send a message to the server
+ *
+ * This function sends a message to the server.
+ *
+ * @param msg The message to send
+ */
+void Client::sendMsg(const std::string &msg)
+{
+    send(_sockfd, msg.c_str(), msg.length(), 0);
 }

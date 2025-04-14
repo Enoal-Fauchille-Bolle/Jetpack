@@ -15,63 +15,28 @@
     #include "Client.hpp"
 
 class GameManager {
-    private:
-        std::unordered_map<std::string, std::unique_ptr<IElement>> gameObjects;
-        bool gameStarted = false;
-        Client* client;
-
     public:
-        void AddObject(const std::string& name, std::unique_ptr<IElement> obj) {
-            gameObjects[name] = std::move(obj);
-        }
+        GameManager();
+        ~GameManager();
 
-        void setup() {
-            std::string message = client->get_msg();
-            if (message.rfind("ID", 0) == 0) {
-                gameObjects["Player"]->Init(message);
-            }
-            if (message.rfind("MAP", 0) == 0) {
-                gameObjects["Map"]->Init(message);
-                gameObjects["View"]->Init(message);
-                gameObjects["Coin"]->Init(message);
-            }
-            if (message.rfind("LOBBY", 0) == 0) {
-                gameObjects["Player"]->Init(message);
-            }
-        }
+        void addObject(const std::string& name, std::unique_ptr<IElement> obj);
 
-        void UpdateAll(float deltaTime) {
-            for (auto& [name, obj] : gameObjects) {
-                obj->Update(deltaTime);
-            }
-        }
+        void setup(void);
 
-        void DrawAll(sf::RenderWindow& window) {
-            for (auto& [name, obj] : gameObjects) {
-                obj->Draw(window);
-            }
-        }
+        void updateAll(float deltaTime);
 
-        void all_init() {
-            for (auto& [name, obj] : gameObjects) {
-                if (!obj->isInit()) {
-                    return;
-                }
-            }
-            client->send_msg("READY");
-        }
+        void drawAll(sf::RenderWindow& window);
 
-        bool get_gameStarted() const {
-            return gameStarted;
-        }
+        void initObjects(void);
 
-        IElement* GetObject(const std::string& name) {
-            auto it = gameObjects.find(name);
-            if (it != gameObjects.end()) {
-                return it->second.get();
-            }
-            return nullptr;
-        }
+        bool isGameStarted(void) const;
+
+        IElement* getObject(const std::string& name);
+
+    private:
+        Client* _client;
+        std::unordered_map<std::string, std::unique_ptr<IElement>> _gameObjects;
+        bool _gameStarted = false;
 };
 
 #endif /* !GAMEMANAGER_HPP_ */

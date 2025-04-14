@@ -12,13 +12,10 @@
 
 class IElement {
     public:
-        virtual void Init(std::string message) = 0;
-        virtual void Update(float deltaTime) = 0;
-        virtual void Draw(sf::RenderWindow& window) = 0;
+        virtual void init(std::string message) = 0;
+        virtual void update(float deltaTime) = 0;
+        virtual void draw(sf::RenderWindow &window) = 0;
         virtual bool isInit() const = 0;
-
-    protected:
-    private:
 };
 
 #endif /* !IELEMENT_HPP_ */

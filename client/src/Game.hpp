@@ -8,21 +8,26 @@
 #ifndef GAME_HPP_
     #define GAME_HPP_
 
+    #include <iostream>
+
+    #include "Client.hpp"
     #include "GameManager.hpp"
+    #include "elements/Coin.hpp"
+    #include "elements/Map.hpp"
+    #include "elements/PlayerList.hpp"
+    #include "elements/View.hpp"
 
 class Game {
     public:
         Game();
         ~Game();
 
-        void serveur_setup();
+        void setupServer(void);
 
-        void game_run();
+        void runGame(void);
 
-    protected:
     private:
         GameManager gameManager;
-
 };
 
 #endif /* !GAME_HPP_ */

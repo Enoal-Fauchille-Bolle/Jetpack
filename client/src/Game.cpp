@@ -6,30 +6,45 @@
 */
 
 #include "Game.hpp"
-#include "element/PlayerList.hpp"
-#include "element/Map.hpp"
-#include "element/Coin.hpp"
-#include "element/View.hpp"
-#include "GameManager.hpp"
-#include "Client.hpp"
-#include <iostream>
 
+/**
+ * @brief Construct a new Game:: Game object
+ *
+ * This function initializes the game manager and adds game objects to it.
+ */
 Game::Game()
 {
-    gameManager.AddObject("Player", std::make_unique<PlayerList>());
-    gameManager.AddObject("Map", std::make_unique<Map>());
-    gameManager.AddObject("Coin", std::make_unique<Coin>());
-    gameManager.AddObject("View", std::make_unique<View>());
+    gameManager.addObject("Player", std::make_unique<PlayerList>());
+    gameManager.addObject("Map", std::make_unique<Map>());
+    gameManager.addObject("Coin", std::make_unique<Coin>());
+    gameManager.addObject("View", std::make_unique<View>());
 }
 
+/**
+ * @brief Destroy the Game:: Game object
+ */
 Game::~Game()
 {
 }
 
-void Game::serveur_setup()
+/**
+ * @brief Run the game loop
+ *
+ * This function runs the game loop, updating and drawing all game objects.
+ */
+void Game::setupServer(void)
 {
-    while (gameManager.get_gameStarted() == false) {
+    while (gameManager.isGameStarted() == false) {
         gameManager.setup();
-        gameManager.all_init();
+        gameManager.initObjects();
     }
+}
+
+/**
+ * @brief Run the game
+ *
+ * This function runs the game loop, updating and drawing all game objects.
+ */
+void Game::runGame(void) {
+    // Todo
 }
