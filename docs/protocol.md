@@ -40,6 +40,11 @@ This command would mean that the **Server** is sending the new informations of a
 
 The updated informations are concerning the **Player 1**, he is now at the coordinates `x=21.0 y=3.1`, he now has **4 coins**, and he is flying.
 
+The **command name** is [case insensitive](https://en.wikipedia.org/wiki/Case_sensitivity)
+
+The command is ending with a Carriage Return Line Feed ([CRLF](https://fr.wikipedia.org/wiki/Carriage_Return_Line_Feed))
+
+
 The response is a little different, it will only contain a [**response code**](#response-types) and an optional **message**:
 
 ```
@@ -59,6 +64,10 @@ And in case of a parsing error, like an unrecognized character, the response wou
 ```
 ERROR Character not recognized: 'p'
 ```
+
+The **response code** is [case insensitive](https://en.wikipedia.org/wiki/Case_sensitivity)
+
+The response is ending with a Carriage Return Line Feed ([CRLF](https://fr.wikipedia.org/wiki/Carriage_Return_Line_Feed))
 
 # Commands
 
