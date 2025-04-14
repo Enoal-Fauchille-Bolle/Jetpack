@@ -1,2 +1,33 @@
+# Ignore build artifacts
 jetpack_client
 jetpack_server
+unit_tests
+build/
+bin/
+obj/
+out/
+
+# Ignore C++ specific files
+*.o
+*.d
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+*.code-workspace
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+*.bak
+*.old
