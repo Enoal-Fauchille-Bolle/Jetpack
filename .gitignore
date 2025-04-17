@@ -6,6 +6,7 @@ build/
 bin/
 obj/
 out/
+maps/
 
 # Ignore C++ specific files
 *.o
