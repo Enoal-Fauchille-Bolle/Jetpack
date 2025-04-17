@@ -2,145 +2,83 @@
 ** EPITECH PROJECT, 2025
 ** Jetpack
 ** File description:
-** main
+** Main File
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <poll.h>
+#include "server.h"
 
-#define PORT 8050
-#define MAX_CLIENTS 10
-#define BUFFER_SIZE 1024
-
-typedef struct {
-    int fd;
-    int id;
-} Client;
-
-// Remove a client from the pollfd and clients arrays.
-// 'index' is the index in the fds array (>= 1) to remove.
-void remove_client(struct pollfd fds[], Client clients[], int *client_count, int index) {
-    close(fds[index].fd);
-    // Shift pollfd array: index 0 is the server, so clients are at indices 1 .. client_count.
-    for (int k = index; k < *client_count; k++) {
-        fds[k] = fds[k + 1];
-    }
-    // Shift clients array: clients[0] corresponds to fds[1]
-    for (int k = index - 1; k < *client_count - 1; k++) {
-        clients[k] = clients[k + 1];
-    }
-    (*client_count)--;
+static void set_read(bool a)
+{
+    if (a == true)
+        read(STDIN_FILENO, NULL, 0);
+    return;
 }
 
-int main() {
-    int server_fd, next_id = 0;
-    struct sockaddr_in server_addr;
-    // We need one extra slot for the server fd at index 0.
-    struct pollfd fds[MAX_CLIENTS + 1];
-    Client clients[MAX_CLIENTS];
-    int client_count = 0;
+static void help_page(void)
+{
+    puts("USAGE: ./jetpack_server -p <port> -m <map> [-d]");
+    puts("\t-p <port>\tPort of the server");
+    puts("\t-m <map>\tPath to the map file");
+    puts("\t-d\t\tDebug mode");
+}
 
-    // Create server socket.
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd < 0) {
-        perror("socket");
-        exit(EXIT_FAILURE);
+static int check_path(char *path)
+{
+    if (path == NULL)
+        return 84;
+    if (access(path, F_OK) == -1) {
+        return 84;
     }
+    return 0;
+}
 
-    // Allow immediate reuse of the port after exit.
-    int opt = 1;
-    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-
-    // Setup address.
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
-
-    // Bind.
-    if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        perror("bind");
-        exit(EXIT_FAILURE);
+static int check_args(int port, char *path)
+{
+    if (port <= 0 || port > 65535) {
+        puts("Error: Invalid port number");
+        return 84;
+    } else if (check_path(path) == 84) {
+        puts("Error: Invalid path");
+        return 84;
     }
+    return 0;
+}
 
-    // Listen.
-    if (listen(server_fd, MAX_CLIENTS) < 0) {
-        perror("listen");
-        exit(EXIT_FAILURE);
+static int jetpack_server(int port, char *path, bool debug)
+{
+    server_t *server = setup_socket(port, debug);
+
+    set_read(false);
+    if (!server || server->sockfd == 0)
+        return 84;
+    server->map = map_parser(path);
+    if (server->map == NULL || server->map->width == 0) {
+        puts("Error: Failed to parse map");
+        close(server->sockfd);
+        return 84;
     }
-
-    fds[0].fd = server_fd;
-    fds[0].events = POLLIN;
-
-    printf("Server listening on port %d...\n", PORT);
-
-    while (1) {
-        int nfds = client_count + 1; // server + clients
-        int poll_count = poll(fds, nfds, -1);
-        if (poll_count < 0) {
-            perror("poll");
-            break;
-        }
-
-        if (fds[0].revents & POLLIN) {
-            struct sockaddr_in client_addr;
-            socklen_t addr_len = sizeof(client_addr);
-            int client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &addr_len);
-            if (client_fd < 0) {
-                perror("accept");
-            } else {
-                if (client_count >= MAX_CLIENTS) {
-                    printf("Max clients reached, rejecting connection...\n");
-                    close(client_fd);
-                } else {
-                    clients[client_count].fd = client_fd;
-                    clients[client_count].id = next_id++;
-                    fds[client_count + 1].fd = client_fd;
-                    fds[client_count + 1].events = POLLIN;
-                    client_count++;
-
-                    char welcome_msg[BUFFER_SIZE];
-                    snprintf(welcome_msg, sizeof(welcome_msg), "ID %d\n", clients[client_count - 1].id);
-                    send(client_fd, welcome_msg, strlen(welcome_msg), 0);
-                    printf("New client connected, assigned ID %d\n", clients[client_count - 1].id);
-                }
-            }
-        }
-
-        // Check for data on each client socket.
-        for (int i = 1; i <= client_count; i++) {
-            if (fds[i].revents & POLLIN) {
-                char buffer[BUFFER_SIZE] = {0};
-                int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer) - 1, 0);
-                if (bytes_read <= 0) {
-                    // Connection closed or error.
-                    printf("Client %d disconnected.\n", clients[i - 1].id);
-                    remove_client(fds, clients, &client_count, i);
-                    i--; // Adjust index after removal.
-                    continue;
-                }
-
-                buffer[bytes_read] = '\0';
-                printf("Received from client %d: %s", clients[i - 1].id, buffer);
-
-                char message[BUFFER_SIZE];
-                snprintf(message, sizeof(message), "data from client %d: %.1000s", clients[i - 1].id, buffer);
-
-                for (int j = 1; j <= client_count; j++) {
-                    if (fds[j].fd != fds[i].fd) {
-                        send(fds[j].fd, message, strlen(message), 0);
-                    }
-                }
-            }
-        }
+    if (server->debug) {
+        printf("Listening on port %d\n", port);
+        printf("Map file: %s\n", path);
     }
+    return process_connections(server);
+}
 
-    // Cleanup.
-    for (int i = 0; i <= client_count; i++) {
-        close(fds[i].fd);
+int main(int ac, char **av)
+{
+    server_options_t options = get_server_options(ac, av);
+
+    if (options.help) {
+        help_page();
+        return 0;
+    }
+    if (check_args(options.port, options.map_path) == 84) {
+        help_page();
+        return 84;
+    }
+    if (jetpack_server(options.port, options.map_path, options.debug) == 84) {
+        puts("Error: Failed to start server");
+        return 84;
     }
     return 0;
 }

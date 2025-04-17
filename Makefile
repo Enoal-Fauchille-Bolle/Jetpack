@@ -12,6 +12,22 @@ CLIENT_ELEMENT_DIR	=	elements/
 SRC_DIR	=	src/
 
 SRC_SERVER	=	$(SERVER_DIR)$(SRC_DIR)main.c	\
+				$(SERVER_DIR)$(SRC_DIR)get_server_options.c	\
+				$(SERVER_DIR)$(SRC_DIR)map_parser.c	\
+				$(SERVER_DIR)$(SRC_DIR)connection.c	\
+				$(SERVER_DIR)$(SRC_DIR)client_handler.c	\
+				$(SERVER_DIR)$(SRC_DIR)socket.c	\
+				$(SERVER_DIR)$(SRC_DIR)command_parser.c	\
+				$(SERVER_DIR)$(SRC_DIR)command_executor.c	\
+				$(SERVER_DIR)$(SRC_DIR)handshake_response_executor.c	\
+				$(SERVER_DIR)$(SRC_DIR)utils.c	\
+				$(SERVER_DIR)$(SRC_DIR)destroyers.c	\
+				$(SERVER_DIR)$(SRC_DIR)commands/quit.c	\
+				$(SERVER_DIR)$(SRC_DIR)commands/ready.c	\
+				$(SERVER_DIR)$(SRC_DIR)handshake_responses/id.c	\
+				$(SERVER_DIR)$(SRC_DIR)handshake_responses/map.c	\
+				$(SERVER_DIR)$(SRC_DIR)handshake_responses/lobby.c	\
+				$(SERVER_DIR)$(SRC_DIR)handshake_responses/start.c	\
 
 SRC_CLIENT	=	$(CLIENT_DIR)$(SRC_DIR)main.cpp	\
 				$(CLIENT_DIR)$(SRC_DIR)Client.cpp	\
