@@ -7,6 +7,11 @@
 
 #include "GameManager.hpp"
 
+/**
+ * @brief Construct a new GameManager object.
+ * @param ip Server IP address.
+ * @param port Server port.
+ */
 GameManager::GameManager(char *ip, int port)
     : _client(std::make_unique<ClientHandler>(ip, std::to_string(port).c_str()))
     , _gameObjects()
@@ -15,16 +20,27 @@ GameManager::GameManager(char *ip, int port)
 {
 }
 
+/**
+ * @brief Destroy the GameManager object.
+ */
 GameManager::~GameManager()
 {
     _client->sendMsg("END");
 }
 
+/**
+ * @brief Add a game object.
+ * @param name Name of the object.
+ * @param obj Unique pointer to the object.
+ */
 void GameManager::addObject(const std::string &name, std::unique_ptr<IElement> obj)
 {
     _gameObjects[name] = std::move(obj);
 }
 
+/**
+ * @brief Setup the game manager (receive initial messages).
+ */
 void GameManager::setup(void)
 {
     std::string message = _client->getMsg();
@@ -42,6 +58,10 @@ void GameManager::setup(void)
 
 }
 
+/**
+ * @brief Update all game objects.
+ * @param deltaTime Time since last update.
+ */
 void GameManager::updateAll(float deltaTime)
 {
     std::string msg = _client->getMsg();
@@ -78,6 +98,10 @@ void GameManager::updateAll(float deltaTime)
     _client->sendMsg("OK");
 }
 
+/**
+ * @brief Draw all game objects.
+ * @param window The SFML render window.
+ */
 void GameManager::drawAll(sf::RenderWindow &window)
 {
     for (auto &[name, obj] : _gameObjects) {
@@ -85,6 +109,9 @@ void GameManager::drawAll(sf::RenderWindow &window)
     }
 }
 
+/**
+ * @brief Initialize all game objects.
+ */
 void GameManager::initObjects(void)
 {
     for (auto &[name, obj] : _gameObjects) {
@@ -96,11 +123,20 @@ void GameManager::initObjects(void)
     _client->sendMsg("READY");
 }
 
+/**
+ * @brief Check if the game has started.
+ * @return true if started, false otherwise.
+ */
 bool GameManager::isGameStarted() const
 {
     return _gameStarted;
 }
 
+/**
+ * @brief Get a game object by name.
+ * @param name Name of the object.
+ * @return Pointer to the object, or nullptr if not found.
+ */
 IElement *GameManager::getObject(const std::string &name)
 {
     auto it = _gameObjects.find(name);
@@ -111,6 +147,10 @@ IElement *GameManager::getObject(const std::string &name)
     return nullptr;
 }
 
+/**
+ * @brief Handle SFML window events.
+ * @param window The SFML render window.
+ */
 void GameManager::handleEvent(sf::RenderWindow &window)
 {
     sf::Event event;

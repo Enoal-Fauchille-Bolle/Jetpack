@@ -7,6 +7,11 @@
 
 #include "Game.hpp"
 
+/**
+ * @brief Construct a new Game object.
+ * @param ip Server IP address.
+ * @param port Server port.
+ */
 Game::Game(char *ip, int port) : gameManager(ip, port)
 {
 
@@ -20,16 +25,25 @@ Game::Game(char *ip, int port) : gameManager(ip, port)
     gameManager.addObject("View", std::make_unique<View>());
 }
 
+/**
+ * @brief Destroy the Game object.
+ */
 Game::~Game()
 {
 }
 
+/**
+ * @brief Setup the server and initialize objects.
+ */
 void Game::setupServer(void)
 {
     gameManager.setup();
     gameManager.initObjects();
 }
 
+/**
+ * @brief Run the main game loop.
+ */
 void Game::runGame(void)
 {
     sf::Clock clock;

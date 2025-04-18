@@ -7,14 +7,25 @@
 
 #include "PlayerList.hpp"
 
+/**
+ * @brief Construct a new PlayerList object.
+ */
 PlayerList::PlayerList()
 {
 }
 
+/**
+ * @brief Destroy the PlayerList object.
+ */
 PlayerList::~PlayerList()
 {
 }
 
+/**
+ * @brief Add a new player to the list.
+ * @param id Player ID.
+ * @param isClient True if this player is the client.
+ */
 void PlayerList::newPlayer(int id, bool isClient)
 {
     if (isClient) {
@@ -28,6 +39,10 @@ void PlayerList::newPlayer(int id, bool isClient)
     _playerList[playerData] = std::move(Player());
 }
 
+/**
+ * @brief Initialize the player list with a message.
+ * @param message The initialization message.
+ */
 void PlayerList::init(std::string message)
 {
     std::string id;
@@ -43,6 +58,11 @@ void PlayerList::init(std::string message)
     }
 }
 
+/**
+ * @brief Update all players in the list.
+ * @param deltaTime Time since last update.
+ * @param param Parameters for update.
+ */
 void PlayerList::update(float deltaTime, const DittoParam &param)
 {
     (void)deltaTime;
@@ -64,7 +84,10 @@ void PlayerList::update(float deltaTime, const DittoParam &param)
     }, param);
 }
 
-
+/**
+ * @brief Draw all players in the list.
+ * @param window The SFML render window.
+ */
 void PlayerList::draw(sf::RenderWindow& window)
 {
     for (auto &[playerData, player] : _playerList) {
@@ -74,6 +97,10 @@ void PlayerList::draw(sf::RenderWindow& window)
     }
 }
 
+/**
+ * @brief Check if all players are initialized.
+ * @return true if all initialized, false otherwise.
+ */
 bool PlayerList::isInit() const
 {
     if (_playerList.empty())
@@ -81,16 +108,31 @@ bool PlayerList::isInit() const
     return _isAllInit;
 }
 
+/**
+ * @brief Compare PlayerListData objects for ordering.
+ * @param other The other PlayerListData.
+ * @return true if this < other.
+ */
 bool PlayerList::PlayerListData::operator<(const PlayerListData& other) const
 {
     return id < other.id;
 }
 
+/**
+ * @brief Compare PlayerListData objects for equality (operator[]).
+ * @param other The other PlayerListData.
+ * @return true if ids are equal.
+ */
 bool PlayerList::PlayerListData::operator[](const PlayerListData& other) const
 {
     return id == other.id;
 }
 
+/**
+ * @brief Compare PlayerListData objects for equality.
+ * @param other The other PlayerListData.
+ * @return true if ids and isClient are equal.
+ */
 bool PlayerList::PlayerListData::operator==(const PlayerListData& other) const
 {
     return id == other.id && isClient == other.isClient;

@@ -7,6 +7,9 @@
 
 #include "View.hpp"
 
+/**
+ * @brief Construct a new View object.
+ */
 View::View()
 {
     sf::View view;
@@ -16,15 +19,27 @@ View::View()
     _view = view;
 }
 
+/**
+ * @brief Destroy the View object.
+ */
 View::~View()
 {
 }
 
+/**
+ * @brief Initialize the view with a message.
+ * @param message The initialization message.
+ */
 void View::init(std::string message)
 {
     (void)message;
 }
 
+/**
+ * @brief Update the view state.
+ * @param deltaTime Time since last update.
+ * @param param Parameters for update.
+ */
 void View::update(float deltaTime, const DittoParam& param)
 {
     (void)deltaTime;
@@ -35,6 +50,10 @@ void View::update(float deltaTime, const DittoParam& param)
     _view.setRotation(0);
 }
 
+/**
+ * @brief Draw the view on the window.
+ * @param window The SFML render window.
+ */
 void View::draw(sf::RenderWindow& window)
 {
     window.setView(_view);
@@ -42,6 +61,10 @@ void View::draw(sf::RenderWindow& window)
     window.display();
 }
 
+/**
+ * @brief Check if the view is initialized.
+ * @return true if initialized, false otherwise.
+ */
 bool View::isInit() const
 {
     return false;

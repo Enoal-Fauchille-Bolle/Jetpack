@@ -10,6 +10,12 @@
 #include "Game.hpp"
 #include "IType.hpp"
 
+/**
+ * @brief Parse command line arguments.
+ * @param ac Argument count.
+ * @param av Argument vector.
+ * @return Parsed client options.
+ */
 client_options_t parseArguments(int ac, char **av)
 {
     client_options_t opts = {nullptr, 0, false, false};
@@ -32,6 +38,9 @@ client_options_t parseArguments(int ac, char **av)
     return opts;
 }
 
+/**
+ * @brief Display the help page.
+ */
 void helpPage(void)
 {
     std::cout << "USAGE" << std::endl;
@@ -45,6 +54,12 @@ void helpPage(void)
     std::cout << "\tSpace key\tFly" << std::endl;
 }
 
+/**
+ * @brief Main entry point.
+ * @param ac Argument count.
+ * @param av Argument vector.
+ * @return Exit code.
+ */
 int main(int ac, char **av)
 {
     client_options_t opts = parseArguments(ac, av);

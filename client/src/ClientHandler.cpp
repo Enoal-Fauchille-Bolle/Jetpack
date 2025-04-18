@@ -7,13 +7,15 @@
 
 #include "ClientHandler.hpp"
 
-
+/**
+ * @brief Default constructor for ClientHandler.
+ */
 ClientHandler::ClientHandler()
 {
 }
 
 /**
- * @brief Construct a new Client:: Client object
+ * @brief Construct a new ClientHandler object and connect to the server.
  *
  * This function initializes the client by creating a socket and connecting to
  * the server.
@@ -41,7 +43,7 @@ ClientHandler::ClientHandler(const char *ip, const char *port)
 }
 
 /**
- * @brief Destroy the Client:: Client object
+ * @brief Destroy the ClientHandler object.
  *
  * This function closes the socket when the client object is destroyed.
  */
@@ -51,7 +53,7 @@ ClientHandler::~ClientHandler()
 }
 
 /**
- * @brief Set the socket to non-blocking mode
+ * @brief Set the socket to non-blocking mode.
  *
  * This function sets the socket to non-blocking mode using fcntl.
  *
@@ -72,7 +74,7 @@ void ClientHandler::setNonBlocking(int sockfd)
 }
 
 /**
- * @brief Get a message from the server
+ * @brief Get a message from the server.
  *
  * This function retrieves a message from the server using poll to check for
  * incoming data.
@@ -98,7 +100,7 @@ std::string ClientHandler::getMsg()
 }
 
 /**
- * @brief Send a message to the server
+ * @brief Send a message to the server.
  *
  * This function sends a message to the server.
  *
