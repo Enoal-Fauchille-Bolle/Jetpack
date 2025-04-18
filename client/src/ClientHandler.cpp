@@ -5,7 +5,12 @@
 ** client
 */
 
-#include "Client.hpp"
+#include "ClientHandler.hpp"
+
+
+ClientHandler::ClientHandler()
+{
+}
 
 /**
  * @brief Construct a new Client:: Client object
@@ -16,7 +21,7 @@
  * @param ip The IP address of the server
  * @param port The port number of the server
  */
-Client::Client(const char *ip, const char *port)
+ClientHandler::ClientHandler(const char *ip, const char *port)
 {
     _sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (_sockfd == -1) {
@@ -40,7 +45,7 @@ Client::Client(const char *ip, const char *port)
  *
  * This function closes the socket when the client object is destroyed.
  */
-Client::~Client()
+ClientHandler::~ClientHandler()
 {
     close(_sockfd);
 }
@@ -52,7 +57,7 @@ Client::~Client()
  *
  * @param sockfd The socket file descriptor
  */
-void Client::setNonBlocking(int sockfd)
+void ClientHandler::setNonBlocking(int sockfd)
 {
     int flags = fcntl(sockfd, F_GETFL, 0);
 
@@ -74,7 +79,7 @@ void Client::setNonBlocking(int sockfd)
  *
  * @return The message received from the server
  */
-std::string Client::getMsg()
+std::string ClientHandler::getMsg()
 {
     struct pollfd fds = {.fd = _sockfd, .events = POLLIN, .revents = 0};
     int ret = poll(&fds, 1, 0);
@@ -99,7 +104,7 @@ std::string Client::getMsg()
  *
  * @param msg The message to send
  */
-void Client::sendMsg(const std::string &msg)
+void ClientHandler::sendMsg(const std::string &msg)
 {
     send(_sockfd, msg.c_str(), msg.length(), 0);
 }

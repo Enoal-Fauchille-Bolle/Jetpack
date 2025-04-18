@@ -13,19 +13,15 @@
     #include <poll.h>
     #include <sys/socket.h>
     #include <unistd.h>
-
     #include <cstring>
     #include <iostream>
     #include <string>
 
-class Client {
+class ClientHandler {
     public:
-        Client() = default;
-        Client(const Client &) = default;
-        Client &operator=(const Client &) = default;
-        Client(Client &&) = default;
-        Client(const char *ip, const char *port);
-        ~Client();
+        ClientHandler();
+        ClientHandler(const char *ip, const char *port);
+        ~ClientHandler();
 
         std::string getMsg();
         void sendMsg(const std::string &msg);
