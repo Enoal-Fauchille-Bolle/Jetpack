@@ -35,8 +35,14 @@ static char *read_socket(client_t *client)
         free(line);
         return NULL;
     }
-    if (line[read - 1] == '\n')
+    if (line[read - 1] == '\n') {
         line[read - 1] = '\0';
+        read--;
+    }
+    if (read > 0 && line[read - 1] == '\r') {
+        line[read - 1] = '\0';
+        read--;
+    }
     return line;
 }
 
