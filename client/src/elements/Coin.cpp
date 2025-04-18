@@ -56,5 +56,5 @@ void Coin::draw(sf::RenderWindow& window)
  */
 bool Coin::isInit() const
 {
-    return false;
+    return true;
 }

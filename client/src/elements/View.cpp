@@ -67,5 +67,5 @@ void View::draw(sf::RenderWindow& window)
  */
 bool View::isInit() const
 {
-    return false;
+    return true;
 }

@@ -115,11 +115,12 @@ void GameManager::initObjects(void)
 {
     for (auto &[name, obj] : _gameObjects) {
         if (!obj->isInit()) {
+            std::cerr << "Object " << name << " is not initialized." << std::endl;
             return;
         }
     }
     _gameStarted = true;
-    _client->sendMsg("READY");
+    _client->sendMsg("READY\r\n");
 }
 
 /**

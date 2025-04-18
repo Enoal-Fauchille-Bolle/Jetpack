@@ -103,8 +103,6 @@ void PlayerList::draw(sf::RenderWindow& window)
  */
 bool PlayerList::isInit() const
 {
-    if (_playerList.empty())
-        return false;
     return _isAllInit;
 }
 
