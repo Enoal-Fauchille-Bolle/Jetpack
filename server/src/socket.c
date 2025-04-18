@@ -9,6 +9,7 @@
 
 #include "connection.h"
 #include "server.h"
+#include "game.h"
 
 /**
  * @brief Set the read mode for the server.
@@ -132,16 +133,36 @@ static bool init_server(server_t *server, int port)
  *
  * @param server The server structure to initialize.
  */
-static void init_clients(server_t *server)
+static int init_clients(server_t *server)
 {
     for (int i = 0; i < MAX_CLIENTS; i++) {
         server->clients[i].client_sockfd = -1;
-        server->clients[i].server = NULL;
+        server->clients[i].server = server;
         server->clients[i].client_addr = NULL;
         server->clients[i].handshake = HANDSHAKE_DONE;
-        server->clients[i].ready = false;
-        server->clients[i].flying = false;
+        server->clients[i].player = NULL;
     }
+    return 0;
+}
+
+/**
+ * @brief Initialize the game structure.
+ *
+ * This function initializes the game structure with default values.
+ *
+ * @return game_t* Pointer to the initialized game structure, or NULL on
+ * failure.
+ */
+static game_t *init_game(void)
+{
+    game_t *game = malloc(sizeof(game_t));
+
+    if (!game)
+        return NULL;
+    game->game_state = GAME_START;
+    game->tick = 0;
+    game->x = 0;
+    return game;
 }
 
 /**
@@ -159,14 +180,16 @@ server_t *setup_socket(int port, bool debug)
 {
     server_t *server = malloc(sizeof(server_t));
 
-    if (!server || !init_server(server, port)) {
+    if (!server)
+        return NULL;
+    server->game = init_game();
+    if (!init_server(server, port) || !server->game ||
+        init_clients(server) == -1) {
         free(server);
         return NULL;
     }
-    init_clients(server);
     server->map = NULL;
     server->debug = debug;
     server->next_id = 1;
-    server->game_state = GAME_START;
     return server;
 }

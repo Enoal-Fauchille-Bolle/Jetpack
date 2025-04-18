@@ -34,8 +34,14 @@ command_t *parse_buffer(char *buffer);
 // Command Executor
 command_status_t execute_command(command_t *command, client_t *client);
 
-// Commands
+// Client Commands
 command_status_t quit_command(command_t *command, client_t *client);
 command_status_t ready_command(command_t *command, client_t *client);
+command_status_t fly_command(command_t *command, client_t *client);
+
+// Server Commands
+command_status_t start_command(server_t *server);
+command_status_t player_command(server_t *server);
+command_status_t end_command(server_t *server, size_t client_id);
 
 #endif /* !COMMANDS_H_ */

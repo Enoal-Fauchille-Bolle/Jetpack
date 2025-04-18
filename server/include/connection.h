@@ -14,7 +14,7 @@
     #include "client.h"
     #include "server.h"
 
-    #define POLL_TIMEOUT 10000
+    #define POLL_TIMEOUT 25
 
 // Client Handler
 void handle_connection(struct pollfd *fd, client_t *client);

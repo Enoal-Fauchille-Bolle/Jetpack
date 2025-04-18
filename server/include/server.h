@@ -13,12 +13,8 @@
     #include "client.h"
     #include "map.h"
 
-typedef enum {
-    GAME_START,
-    GAME_IN_PROGRESS,
-    GAME_END
-} game_state_t;
 
+typedef struct game_s game_t;
 typedef struct server_s {
     int sockfd;
     client_t clients[MAX_CLIENTS];
@@ -27,7 +23,7 @@ typedef struct server_s {
     map_t *map;
     bool debug;
     size_t next_id;
-    game_state_t game_state;
+    game_t *game;
 } server_t;
 
 #endif /* !SERVER_H_ */

@@ -12,7 +12,6 @@
 const handshake_response_handler_t handshake_response_handlers[] = {
     {WAITING_FOR_ID_OK, id_handshake_response},
     {WAITING_FOR_MAP_OK, map_handshake_response},
-    {WAITING_FOR_LOBBY_OK, lobby_handshake_response},
     {WAITING_FOR_START_OK, start_handshake_response}, {HANDSHAKE_DONE, NULL}};
 
 /**

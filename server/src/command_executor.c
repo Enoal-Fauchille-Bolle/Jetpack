@@ -12,8 +12,8 @@
 #include "server.h"
 #include "utils.h"
 
-const command_handler_t command_handlers[] = {
-    {"QUIT", quit_command}, {"READY", ready_command}, {NULL, NULL}};
+const command_handler_t command_handlers[] = {{"QUIT", quit_command},
+    {"READY", ready_command}, {"FLY", fly_command}, {NULL, NULL}};
 
 /**
  * @brief Get the command handler for a given command.

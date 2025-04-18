@@ -105,6 +105,10 @@ void handle_connection(struct pollfd *fd, client_t *client)
 
     if (!buffer)
         return;
+    if (strlen(buffer) == 0) {
+        free(buffer);
+        return;
+    }
     handshake_response_result = handle_handshake_response(client, buffer);
     if (handshake_response_result == HANDSHAKE_RESPONSE_NOT_FOUND)
         command_result = handle_client_command(client, buffer);

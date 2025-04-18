@@ -14,8 +14,24 @@
 #include <sys/socket.h>
 
 #include "server.h"
+#include "game.h"
 #include "connection.h"
 #include "destroyers.h"
+
+static player_t *init_player(void)
+{
+    player_t *player = malloc(sizeof(player_t));
+
+    if (player == NULL)
+        return NULL;
+    player->ready = false;
+    player->y = 0;
+    player->score = 0;
+    player->flying = false;
+    player->alive = true;
+    player->death_x_pos = 0;
+    return player;
+}
 
 /**
  * @brief Initialize a client structure.
@@ -48,6 +64,7 @@ static client_t init_client(
     server->next_id++;
     client.handshake = HANDSHAKE_START;
     client.handshake = WAITING_FOR_ID_OK;
+    client.player = init_player();
     dprintf(client.client_sockfd, "ID %ld\r\n", client.id);
     return client;
 }
@@ -148,7 +165,7 @@ static int process_connection(
             perror("poll");
         return 1;
     }
-    if (fds[0].revents & POLLIN && server->game_state == GAME_START) {
+    if (fds[0].revents & POLLIN && server->game->game_state == GAME_START) {
         accept_new_connection(server, clients, fds, MAX_CLIENTS + 1);
     }
     process_client_events(fds, MAX_CLIENTS + 1, clients);
@@ -170,9 +187,11 @@ int process_connections(server_t *server)
 
     init_poll_fds(fds, server->sockfd);
     server->next_id = 1;
-    while (true) {
+    while (server->game->game_state != GAME_END) {
         if (process_connection(server, fds, server->clients))
             break;
+        if (server->game->game_state == GAME_IN_PROGRESS)
+            game_tick(server);
     }
     destroy_server(server, fds, server->clients);
     return 0;

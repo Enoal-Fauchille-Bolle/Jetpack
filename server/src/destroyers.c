@@ -53,7 +53,7 @@ void destroy_client(client_t *client, bool verbose)
 {
     if (client == NULL)
         return;
-    if (verbose)
+    if (verbose && client->server->debug)
         printf("Disconnected %s:%d\n",
             inet_ntoa(client->client_addr->sin_addr),
             ntohs(client->client_addr->sin_port));
