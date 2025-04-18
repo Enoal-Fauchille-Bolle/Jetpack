@@ -40,6 +40,7 @@ SRC_SERVER  =   $(SERVER_DIR)/$(SRC_DIR)/main.c			  \
 				$(SERVER_DIR)/$(SRC_DIR)/server_commands/end.c		 \
 				$(SERVER_DIR)/$(SRC_DIR)/handshake_responses/id.c	  \
 				$(SERVER_DIR)/$(SRC_DIR)/handshake_responses/map.c	 \
+				$(SERVER_DIR)/$(SRC_DIR)/handshake_responses/player.c	 \
 				$(SERVER_DIR)/$(SRC_DIR)/handshake_responses/start.c
 
 # Source files for client

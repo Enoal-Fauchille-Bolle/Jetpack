@@ -7,9 +7,9 @@
 
 #include <string.h>
 
-#include "server.h"
-#include "game.h"
 #include "commands.h"
+#include "game.h"
+#include "server.h"
 
 /**
  * @brief Send player information to a specific client.
@@ -27,6 +27,7 @@ static void send_players_infos(server_t *server, client_t *client)
         if (server->clients[i].client_sockfd == -1 ||
             !server->clients[i].player)
             continue;
+        server->clients[i].handshake = WAITING_FOR_PLAYER_OK;
         if (server->clients[i].player->alive) {
             dprintf(client->client_sockfd, "PLAYER %lu %f %f %d %s\r\n",
                 server->clients[i].id, server->game->x,

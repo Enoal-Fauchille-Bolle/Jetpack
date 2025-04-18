@@ -12,7 +12,8 @@
 const handshake_response_handler_t handshake_response_handlers[] = {
     {WAITING_FOR_ID_OK, id_handshake_response},
     {WAITING_FOR_MAP_OK, map_handshake_response},
-    {WAITING_FOR_START_OK, start_handshake_response}, {HANDSHAKE_DONE, NULL}};
+    {WAITING_FOR_START_OK, start_handshake_response},
+    {WAITING_FOR_PLAYER_OK, player_handshake_response}, {HANDSHAKE_DONE, NULL}};
 
 /**
  * @brief Get the handshake response handler for the current state.

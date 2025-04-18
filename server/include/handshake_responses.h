@@ -28,7 +28,7 @@ handshake_response_status_t execute_handshake_response(client_t *client);
 // Handshake Responses
 handshake_response_status_t id_handshake_response(client_t *client);
 handshake_response_status_t map_handshake_response(client_t *client);
-handshake_response_status_t lobby_handshake_response(client_t *client);
 handshake_response_status_t start_handshake_response(client_t *client);
+handshake_response_status_t player_handshake_response(client_t *client);
 
 #endif /* !HANDSHAKE_RESPONSES_H_ */
