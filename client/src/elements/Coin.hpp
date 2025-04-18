@@ -9,6 +9,7 @@
     #define COIN_HPP_
 
     #include "../IElement.hpp"
+    #include "../IType.hpp"
 
 class Coin : public IElement {
     public:
@@ -16,7 +17,7 @@ class Coin : public IElement {
         ~Coin();
 
         void init(std::string message) override;
-        void update(float deltaTime) override;
+        void update(float deltaTime, const DittoParam &param) override;
         void draw(sf::RenderWindow& window) override;
         bool isInit() const override;
 };

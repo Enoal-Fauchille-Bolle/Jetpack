@@ -7,67 +7,43 @@
 
 #include "Map.hpp"
 
-/**
- * @brief Construct a new Map:: Map object
- */
 Map::Map()
 {
 }
 
-/**
- * @brief Destroy the Map:: Map object
- */
 Map::~Map()
 {
 }
 
-/**
- * @brief Initialize the Map object
- *
- * This function initializes the Map object. It is currently empty and does not perform any operations.
- *
- * @param message The message to parse for map initialization.
- */
 void Map::init(std::string message)
 {
     (void)message;
-    // Todo
+    if (!_texture.loadFromFile("assets/jetpack_map.png")) {
+        std::cerr << "Error loading texture" << std::endl;
+        return;
+    }
+    _sprite.setTexture(_texture);
+    _sprite.setPosition(0, 0);
+    _sprite.setScale(0.1f, 0.1f);
+    _sprite.setOrigin(_sprite.getGlobalBounds().width / 2,
+        _sprite.getGlobalBounds().height / 2);
+    _sprite.setColor(sf::Color(255, 255, 255, 255));
+    _isInit = true;
 }
 
-/**
- * @brief Update the Map object
- *
- * This function updates the Map object. It is currently empty and does not perform any operations.
- *
- * @param deltaTime The time elapsed since the last update.
- */
-void Map::update(float deltaTime)
+void Map::update(float deltaTime, const DittoParam& param)
 {
     (void)deltaTime;
-    // Todo
+    (void)param;
+    _sprite.setPosition(0, 0);
 }
 
-/**
- * @brief Draw the Map object
- *
- * This function draws the Map object. It is currently empty and does not perform any operations.
- *
- * @param window The window to draw the Map object on.
- */
 void Map::draw(sf::RenderWindow& window)
 {
-    (void)window;
-    // Todo
+    window.draw(_sprite);
 }
 
-/**
- * @brief Check if the Map object is initialized
- *
- * This function checks if the Map object is initialized. It currently returns false.
- *
- * @return true if the Map object is initialized, false otherwise.
- */
 bool Map::isInit() const
 {
-    return false;
+    return _isInit;
 }
