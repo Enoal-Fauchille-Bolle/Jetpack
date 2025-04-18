@@ -9,11 +9,14 @@
     #define IELEMENT_HPP_
 
     #include <SFML/Graphics.hpp>
+    #include <string>
+    #include "IType.hpp"
+
 
 class IElement {
     public:
         virtual void init(std::string message) = 0;
-        virtual void update(float deltaTime) = 0;
+        virtual void update(float deltaTime,const DittoParam &param) = 0;
         virtual void draw(sf::RenderWindow &window) = 0;
         virtual bool isInit() const = 0;
 };

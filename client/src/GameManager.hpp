@@ -1,42 +1,49 @@
-/*
-** EPITECH PROJECT, 2025
-** Jetpack
-** File description:
-** GameManager
-*/
+    /*
+    ** EPITECH PROJECT, 2025
+    ** Jetpack
+    ** File description:
+    ** GameManager
+    */
 
-#ifndef GAMEMANAGER_HPP_
-    #define GAMEMANAGER_HPP_
+    #ifndef GAMEMANAGER_HPP_
+        #define GAMEMANAGER_HPP_
 
-    #include <SFML/Graphics.hpp>
-    #include <unordered_map>
-    #include <memory>
-    #include "IElement.hpp"
-    #include "Client.hpp"
+        #include <SFML/Graphics.hpp>
+        #include <unordered_map>
+        #include <memory>
+        #include <variant>
+        #include "IElement.hpp"
+        #include "ClientHandler.hpp"
+        #include "IType.hpp"
+        #include <sstream>
 
-class GameManager {
-    public:
-        GameManager();
-        ~GameManager();
+    class GameManager {
+        public:
+            GameManager(char *ip, int port);
+            ~GameManager();
 
-        void addObject(const std::string& name, std::unique_ptr<IElement> obj);
+            void addObject(const std::string& name, std::unique_ptr<IElement> obj);
 
-        void setup(void);
+            void setup(void);
 
-        void updateAll(float deltaTime);
+            void updateAll(float deltaTime);
 
-        void drawAll(sf::RenderWindow& window);
+            void drawAll(sf::RenderWindow& window);
 
-        void initObjects(void);
+            void initObjects(void);
 
-        bool isGameStarted(void) const;
+            bool isGameStarted(void) const;
 
-        IElement* getObject(const std::string& name);
+            void handleEvent(sf::RenderWindow& window);
 
-    private:
-        Client* _client;
-        std::unordered_map<std::string, std::unique_ptr<IElement>> _gameObjects;
-        bool _gameStarted = false;
-};
+            IElement* getObject(const std::string& name);
 
-#endif /* !GAMEMANAGER_HPP_ */
+        private:
+            std::unique_ptr<ClientHandler> _client;
+            std::unordered_map<std::string, std::unique_ptr<IElement>> _gameObjects;
+            bool _gameStarted = false;
+
+            bool _isFlying = false;
+    };
+
+    #endif /* !GAMEMANAGER_HPP_ */

@@ -7,78 +7,77 @@
 
 #include "GameManager.hpp"
 
-/**
- * @brief Construct a new Game Manager:: Game Manager object
- */
-GameManager::GameManager()
+GameManager::GameManager(char *ip, int port)
+    : _client(std::make_unique<ClientHandler>(ip, std::to_string(port).c_str()))
+    , _gameObjects()
+    , _gameStarted(false)
+    , _isFlying(false)
 {
 }
 
-/**
- * @brief Destroy the Game Manager:: Game Manager object
- */
 GameManager::~GameManager()
 {
+    _client->sendMsg("END");
 }
 
-/**
- * @brief Add an object to the game manager
- *
- * This function adds an object to the game manager's list of game objects.
- *
- * @param name The name of the object
- * @param obj The object to add
- */
-void GameManager::addObject(
-    const std::string &name, std::unique_ptr<IElement> obj)
+void GameManager::addObject(const std::string &name, std::unique_ptr<IElement> obj)
 {
     _gameObjects[name] = std::move(obj);
 }
 
-/**
- * @brief Setup the game manager
- *
- * This function sets up the game manager by initializing the game objects
- * based on the messages received from the client.
- */
 void GameManager::setup(void)
 {
     std::string message = _client->getMsg();
 
     if (message.rfind("ID", 0) == 0) {
         _gameObjects["Player"]->init(message);
+        _client->sendMsg("OK");
     }
     if (message.rfind("MAP", 0) == 0) {
         _gameObjects["Map"]->init(message);
         _gameObjects["View"]->init(message);
         _gameObjects["Coin"]->init(message);
+        _client->sendMsg("OK");
     }
-    if (message.rfind("LOBBY", 0) == 0) {
-        _gameObjects["Player"]->init(message);
-    }
+
 }
 
-/**
- * @brief Update all game objects
- *
- * This function updates all game objects in the game manager.
- *
- * @param deltaTime The time since the last update
- */
 void GameManager::updateAll(float deltaTime)
 {
-    for (auto &[name, obj] : _gameObjects) {
-        obj->update(deltaTime);
+    std::string msg = _client->getMsg();
+    DittoParam msg_parsed;
+
+    if (msg.rfind("PLAYER", 0) == 0) {
+        std::istringstream iss(msg);
+        std::string tag;
+        int playerId;
+        float posX, posY;
+        int score;
+        bool flyStatus;
+
+        iss >> tag >> playerId >> posX >> posY >> score >> flyStatus;
+        msg_parsed = std::make_tuple(playerId, posX, posY, flyStatus);
+        _gameObjects["Player"]->update(deltaTime, msg_parsed);
+        _gameObjects["View"]->update(deltaTime, msg_parsed);
+    } else if (msg.rfind("COIN", 0) == 0) {
+        std::istringstream iss(msg);
+        std::string tag;
+        int coinId;
+        float posX, posY;
+
+        iss >> tag >> coinId >> posX >> posY;
+        msg_parsed = std::make_tuple(coinId, posX, posY);
+        _gameObjects["Coin"]->update(deltaTime, msg_parsed);
+    } else {
+        if (msg.rfind("END", 0) == 0) {
+            _gameStarted = false;
+            return;
+        }
+        std::cerr << "Unknown message: " << msg << std::endl;
     }
+    _client->sendMsg("OK");
 }
 
-/**
- * @brief Draw all game objects
- *
- * This function draws all game objects in the game manager.
- *
- * @param window The window to draw the objects on
- */
 void GameManager::drawAll(sf::RenderWindow &window)
 {
     for (auto &[name, obj] : _gameObjects) {
@@ -86,11 +85,6 @@ void GameManager::drawAll(sf::RenderWindow &window)
     }
 }
 
-/**
- * @brief Initialize all game objects
- *
- * This function initializes all game objects in the game manager.
- */
 void GameManager::initObjects(void)
 {
     for (auto &[name, obj] : _gameObjects) {
@@ -98,29 +92,15 @@ void GameManager::initObjects(void)
             return;
         }
     }
+    _gameStarted = true;
     _client->sendMsg("READY");
 }
 
-/**
- * @brief Check if the game has started
- *
- * This function checks if the game has started.
- *
- * @return true if the game has started, false otherwise
- */
 bool GameManager::isGameStarted() const
 {
     return _gameStarted;
 }
 
-/**
- * @brief Get an object by name
- *
- * This function retrieves an object from the game manager by its name.
- *
- * @param name The name of the object
- * @return A pointer to the object, or nullptr if not found
- */
 IElement *GameManager::getObject(const std::string &name)
 {
     auto it = _gameObjects.find(name);
@@ -129,4 +109,29 @@ IElement *GameManager::getObject(const std::string &name)
         return it->second.get();
     }
     return nullptr;
+}
+
+void GameManager::handleEvent(sf::RenderWindow &window)
+{
+    sf::Event event;
+
+    while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
+            window.close();
+        }
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Space
+                && _isFlying == false) {
+                _client->sendMsg("FLY 1");
+                _isFlying = true;
+            }
+        }
+        if (event.type == sf::Event::KeyReleased) {
+            if (event.key.code == sf::Keyboard::Space
+                && _isFlying == true) {
+                _client->sendMsg("FLY 0");
+                _isFlying = false;
+            }
+        }
+    }
 }

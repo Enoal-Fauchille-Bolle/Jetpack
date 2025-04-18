@@ -7,19 +7,9 @@
 
 #include <iostream>
 
-#include "client.hpp"
+#include "Game.hpp"
+#include "IType.hpp"
 
-/**
- * @brief Parse command line arguments
- *
- * This function takes the command line arguments and parses them
- * to extract the server IP address, port, and debug mode.
- * It returns a struct containing the parsed options.
- *
- * @param ac The number of command line arguments
- * @param av The command line arguments
- * @return client_options_t A struct containing the parsed options
- */
 client_options_t parseArguments(int ac, char **av)
 {
     client_options_t opts = {nullptr, 0, false, false};
@@ -42,14 +32,6 @@ client_options_t parseArguments(int ac, char **av)
     return opts;
 }
 
-/**
- * @brief Display the help page for the client
- *
- * This function prints the usage and description of the client
- * command line options and controls to the standard output.
- * It provides information on how to run the client, including
- * the required arguments and their meanings.
- */
 void helpPage(void)
 {
     std::cout << "USAGE" << std::endl;
@@ -75,8 +57,7 @@ int main(int ac, char **av)
         helpPage();
         return 84;
     }
-    // Initialize the game
-    // Game game(av[1]);
-    // game.run();
+    Game game(opts.ip, opts.port);
+    game.runGame();
     return 0;
 }
