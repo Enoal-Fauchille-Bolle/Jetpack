@@ -91,4 +91,26 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+NAME_TEST	=	unit_tests
+
+SRC_TESTS	=	tests/test.cpp	\
+
+FLAGS_TEST	=	-lcriterion --coverage
+
+CFLAGS_TEST	=	-I./$(SERVER_DIR)include/	\
+				-I./$(CLIENT_DIR)include/	\
+				-Werror -Wall -Wextra -g
+
+unit_tests: re
+	g++ -o $(NAME_TEST) $(SRC_TESTS) $(CFLAGS_TEST) $(FLAGS_TEST)
+
+tests_run: unit_tests
+	./$(NAME_TEST)
+
+coverage: unit_tests
+	./$(NAME_TEST)
+	gcovr --exclude tests/
+	gcovr --exclude tests/ --txt-metric branch
+	rm $(NAME_TEST)
+
+.PHONY: all clean fclean re unit_tests tests_run coverage
