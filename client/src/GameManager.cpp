@@ -78,6 +78,7 @@ void GameManager::updateAll(float deltaTime)
         msg_parsed = std::make_tuple(playerId, posX, posY, flyStatus);
         _gameObjects["Player"]->update(deltaTime, msg_parsed);
         _gameObjects["View"]->update(deltaTime, msg_parsed);
+        _client->sendMsg("OK\r\n");
     } else if (msg.rfind("COIN", 0) == 0) {
         std::istringstream iss(msg);
         std::string tag;
@@ -87,14 +88,14 @@ void GameManager::updateAll(float deltaTime)
         iss >> tag >> coinId >> posX >> posY;
         msg_parsed = std::make_tuple(coinId, posX, posY);
         _gameObjects["Coin"]->update(deltaTime, msg_parsed);
+        _client->sendMsg("OK\r\n");
     } else {
         if (msg.rfind("END", 0) == 0) {
             _gameStarted = false;
+            _client->sendMsg("OK\r\n");
             return;
         }
-        std::cerr << "Unknown message: " << msg << std::endl;
     }
-    _client->sendMsg("OK\r\n");
 }
 
 /**
@@ -162,14 +163,14 @@ void GameManager::handleEvent(sf::RenderWindow &window)
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Space
                 && _isFlying == false) {
-                _client->sendMsg("FLY 1");
+                _client->sendMsg("FLY 1\r\n");
                 _isFlying = true;
             }
         }
         if (event.type == sf::Event::KeyReleased) {
             if (event.key.code == sf::Keyboard::Space
                 && _isFlying == true) {
-                _client->sendMsg("FLY 0");
+                _client->sendMsg("FLY 0\r\n");
                 _isFlying = false;
             }
         }

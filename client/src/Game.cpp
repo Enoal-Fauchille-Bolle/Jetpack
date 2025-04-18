@@ -69,7 +69,7 @@ void Game::runGame(void)
             sf::Time deltaTime = clock.restart();
             gameManager.updateAll(deltaTime.asSeconds());
             gameManager.drawAll(window);
-            window.clear(sf::Color(0, 0, 0));
+            gameManager.handleEvent(window);
             window.display();
         }
     }

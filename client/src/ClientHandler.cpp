@@ -1,11 +1,12 @@
-/*
-** EPITECH PROJECT, 2025
-** Jetpack
-** File description:
-** client
-*/
-
 #include "ClientHandler.hpp"
+
+#include <unistd.h>
+#include <cstring>
+#include <iostream>
+#include <cstdlib>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <poll.h>
 
 /**
  * @brief Default constructor for ClientHandler.
@@ -25,21 +26,29 @@ ClientHandler::ClientHandler()
  */
 ClientHandler::ClientHandler(const char *ip, const char *port)
 {
+    // Create a blocking TCP socket
     _sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (_sockfd == -1) {
         perror("socket");
         exit(EXIT_FAILURE);
     }
+
+    // Prepare server address
     _serverAddr.sin_family = AF_INET;
     _serverAddr.sin_port = htons(std::stoi(port));
-    inet_pton(AF_INET, ip, &_serverAddr.sin_addr);
-    if (connect(_sockfd, (struct sockaddr *)&_serverAddr,
-            sizeof(_serverAddr)) == -1) {
+    if (inet_pton(AF_INET, ip, &_serverAddr.sin_addr) <= 0) {
+        perror("inet_pton");
+        close(_sockfd);
+        exit(EXIT_FAILURE);
+    }
+
+    // Connect (blocking)
+    if (connect(_sockfd, reinterpret_cast<struct sockaddr *>(&_serverAddr),
+                sizeof(_serverAddr)) == -1) {
         perror("connect");
         close(_sockfd);
         exit(EXIT_FAILURE);
     }
-    setNonBlocking(_sockfd);
 }
 
 /**
@@ -49,27 +58,8 @@ ClientHandler::ClientHandler(const char *ip, const char *port)
  */
 ClientHandler::~ClientHandler()
 {
-    close(_sockfd);
-}
-
-/**
- * @brief Set the socket to non-blocking mode.
- *
- * This function sets the socket to non-blocking mode using fcntl.
- *
- * @param sockfd The socket file descriptor
- */
-void ClientHandler::setNonBlocking(int sockfd)
-{
-    int flags = fcntl(sockfd, F_GETFL, 0);
-
-    if (flags == -1) {
-        perror("fcntl F_GETFL");
-        exit(EXIT_FAILURE);
-    }
-    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        perror("fcntl F_SETFL");
-        exit(EXIT_FAILURE);
+    if (_sockfd != -1) {
+        close(_sockfd);
     }
 }
 
@@ -77,25 +67,29 @@ void ClientHandler::setNonBlocking(int sockfd)
  * @brief Get a message from the server.
  *
  * This function retrieves a message from the server using poll to check for
- * incoming data.
+ * incoming data, then reads using read().
  *
  * @return The message received from the server
  */
 std::string ClientHandler::getMsg()
 {
-    struct pollfd fds = {.fd = _sockfd, .events = POLLIN, .revents = 0};
-    int ret = poll(&fds, 1, 0);
+    struct pollfd fds;
+    fds.fd = _sockfd;
+    fds.events = POLLIN;
+    fds.revents = 0;
 
+    // Poll with zero timeout for non-blocking check
+    int ret = poll(&fds, 1, 0);
     std::string message;
+
     if (ret > 0 && (fds.revents & POLLIN)) {
         char buffer[1024];
-        memset(buffer, 0, sizeof(buffer));
-        int bytesRead = recv(_sockfd, buffer, sizeof(buffer) - 1, 0);
+        std::memset(buffer, 0, sizeof(buffer));
+        ssize_t bytesRead = read(_sockfd, buffer, sizeof(buffer) - 1);
         if (bytesRead > 0) {
-            message = std::string(buffer);
-            std::cout << message;
+            message.assign(buffer, static_cast<size_t>(bytesRead));
+            std::cout << message << std::endl;
         }
-        std::cout << message << std::endl;
     }
     return message;
 }
@@ -103,11 +97,22 @@ std::string ClientHandler::getMsg()
 /**
  * @brief Send a message to the server.
  *
- * This function sends a message to the server.
+ * This function sends a message to the server using write().
  *
  * @param msg The message to send
  */
 void ClientHandler::sendMsg(const std::string &msg)
 {
-    send(_sockfd, msg.c_str(), msg.length(), 0);
+    const char *data = msg.c_str();
+    size_t total = 0;
+    size_t toSend = msg.length();
+
+    while (total < toSend) {
+        ssize_t sent = write(_sockfd, data + total, toSend - total);
+        if (sent < 0) {
+            perror("write");
+            break;
+        }
+        total += static_cast<size_t>(sent);
+    }
 }

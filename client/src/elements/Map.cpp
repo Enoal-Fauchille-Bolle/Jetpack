@@ -28,7 +28,7 @@ Map::~Map()
 void Map::init(std::string message)
 {
     (void)message;
-    if (!_texture.loadFromFile("assets/jetpack_map.png")) {
+    if (!_texture.loadFromFile("assets/background.png")) {
         std::cerr << "Error loading texture" << std::endl;
         return;
     }
