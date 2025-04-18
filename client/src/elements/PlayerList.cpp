@@ -7,95 +7,91 @@
 
 #include "PlayerList.hpp"
 
-/**
- * @brief Construct a new Player List:: Player List object
- */
 PlayerList::PlayerList()
 {
 }
 
-/**
- * @brief Destroy the Player List:: Player List object
- */
 PlayerList::~PlayerList()
 {
 }
 
-/**
- * @brief Initialize the PlayerList object
- *
- * This function initializes the PlayerList object by parsing the given message.
- * It extracts the player ID and initializes the player data accordingly.
- *
- * @param message The message to parse for player initialization.
- */
+void PlayerList::newPlayer(int id, bool isClient)
+{
+    if (isClient) {
+        _localId = id;
+        _isAllInit = true;
+    }
+    PlayerListData playerData;
+    playerData.id = id;
+    playerData.isClient = isClient;
+    playerData.isInit = true;
+    _playerList[playerData] = std::move(Player());
+}
+
 void PlayerList::init(std::string message)
 {
     std::string id;
     int playerId;
-    PlayerListData playerData;
 
     if (message.rfind("ID", 0) == 0) {
         id = message.substr(3);
         playerId = std::stoi(id);
-        playerData.id = playerId;
-        playerData.isClient = true;
-        playerData.isInit = true;
-        _playerList[playerData] = std::move(Player());
-    } else if (message.rfind("LOBBY", 0) == 0) {
-
+        newPlayer(playerId, true);
+        _isAllInit = true;
     } else {
         return;
     }
 }
 
-/**
- * @brief Update the PlayerList object
- *
- * This function updates the PlayerList object. It is currently empty and does not perform any operations.
- *
- * @param deltaTime The time elapsed since the last update.
- */
-void PlayerList::update(float deltaTime)
+void PlayerList::update(float deltaTime, const DittoParam &param)
 {
     (void)deltaTime;
-    // Todo
+    std::visit([&](auto&& value) {
+        using T = std::decay_t<decltype(value)>;
+
+        if constexpr (std::is_same_v<T, std::tuple<int, float, float, bool>>) {
+            auto [playerId, posX, posY, isFly] = value;
+            PlayerListData playerData;
+            playerData.id = playerId;
+            playerData.isInit = true;
+            if (_playerList.find(playerData) != _playerList.end()) {
+                _playerList[playerData].NewPosition(posX, posY);
+            } else {
+                newPlayer(playerId, false);
+                _playerList[playerData].NewPosition(posX, posY);
+            }
+        }
+    }, param);
 }
 
-/**
- * @brief Draw the PlayerList object
- *
- * This function draws the PlayerList object. It is currently empty and does not perform any operations.
- *
- * @param window The render window to draw on.
- */
+
 void PlayerList::draw(sf::RenderWindow& window)
 {
-    (void)window;
-    // Todo
+    for (auto &[playerData, player] : _playerList) {
+        if (playerData.isInit) {
+            player.Draw(window);
+        }
+    }
 }
 
-/**
- * @brief Check if the PlayerList object is initialized
- *
- * This function checks if the PlayerList object is initialized.
- *
- * @return true if the PlayerList object is initialized, false otherwise.
- */
 bool PlayerList::isInit() const
 {
+    if (_playerList.empty())
+        return false;
     return _isAllInit;
 }
 
-/**
- * @brief Compare two PlayerListData objects
- *
- * This function compares two PlayerListData objects based on their IDs.
- *
- * @param other The other PlayerListData object to compare with.
- * @return true if this object is less than the other, false otherwise.
- */
 bool PlayerList::PlayerListData::operator<(const PlayerListData& other) const
 {
     return id < other.id;
+}
+
+bool PlayerList::PlayerListData::operator[](const PlayerListData& other) const
+{
+    return id == other.id;
+}
+
+bool PlayerList::PlayerListData::operator==(const PlayerListData& other) const
+{
+    return id == other.id && isClient == other.isClient;
 }

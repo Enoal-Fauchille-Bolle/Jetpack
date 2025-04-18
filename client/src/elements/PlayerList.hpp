@@ -17,7 +17,7 @@ class PlayerList : public IElement {
         ~PlayerList();
 
         void init(std::string message) override;
-        void update(float deltaTime) override;
+        void update(float deltaTime,const DittoParam& Param) override;
         void draw(sf::RenderWindow& window) override;
         bool isInit() const override;
 
@@ -25,13 +25,19 @@ class PlayerList : public IElement {
         struct PlayerListData {
             int id;
             bool isClient;
-            bool isInit;
+            bool isInit = false;
+            std::pair<float, float> pos;
 
             bool operator<(const PlayerListData& other) const;
+            bool operator[](const PlayerListData& other) const;
+            bool operator==(const PlayerListData& other) const;
         };
 
         std::map<PlayerListData, Player> _playerList;
         bool _isAllInit = false;
+        int _localId = 0;
+    protected:
+        void newPlayer(int id, bool isClient);
 };
 
 #endif /* !PLAYERLIST_HPP_ */
