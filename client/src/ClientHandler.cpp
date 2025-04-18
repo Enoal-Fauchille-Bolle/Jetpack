@@ -95,6 +95,7 @@ std::string ClientHandler::getMsg()
             message = std::string(buffer);
             std::cout << message;
         }
+        std::cout << message << std::endl;
     }
     return message;
 }

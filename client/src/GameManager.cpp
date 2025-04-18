@@ -44,16 +44,15 @@ void GameManager::addObject(const std::string &name, std::unique_ptr<IElement> o
 void GameManager::setup(void)
 {
     std::string message = _client->getMsg();
-
     if (message.rfind("ID", 0) == 0) {
         _gameObjects["Player"]->init(message);
-        _client->sendMsg("OK");
+        _client->sendMsg("OK\r\n");
     }
     if (message.rfind("MAP", 0) == 0) {
         _gameObjects["Map"]->init(message);
         _gameObjects["View"]->init(message);
         _gameObjects["Coin"]->init(message);
-        _client->sendMsg("OK");
+        _client->sendMsg("OK\r\n");
     }
 
 }
@@ -95,7 +94,7 @@ void GameManager::updateAll(float deltaTime)
         }
         std::cerr << "Unknown message: " << msg << std::endl;
     }
-    _client->sendMsg("OK");
+    _client->sendMsg("OK\r\n");
 }
 
 /**
