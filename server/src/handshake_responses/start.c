@@ -19,5 +19,5 @@
 handshake_response_status_t start_handshake_response(client_t *client)
 {
     (void)client;
-    return COMMAND_SUCCESS;
+    return HANDSHAKE_RESPONSE_SUCCESS;
 }

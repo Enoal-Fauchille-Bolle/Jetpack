@@ -61,7 +61,7 @@ handshake_response_status_t execute_handshake_response(client_t *client)
                 client->handshake);
         if (client->server->debug)
             printf("No Handshake\n");
-        return COMMAND_FAILURE;
+        return HANDSHAKE_RESPONSE_FAILURE;
     }
     return handler.handler(client);
 }

@@ -5,13 +5,14 @@
 ** Client Handler File
 */
 
+#include <poll.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <poll.h>
 
 #include "commands.h"
 #include "destroyers.h"
+#include "handshake_responses.h"
 
 /**
  * @brief Read a line from the socket stream.
@@ -49,17 +50,17 @@ static char *read_socket(client_t *client)
  * @param buffer The buffer containing the handshake response.
  * @return command_status_t The status of the handshake response.
  */
-static command_status_t handle_handshake_response(
+static handshake_response_status_t handle_handshake_response(
     client_t *client, char *buffer)
 {
     if (strcasecmp(buffer, "OK") != 0 && strcasecmp(buffer, "ERROR") != 0) {
-        return COMMAND_NOT_FOUND;
+        return HANDSHAKE_RESPONSE_NOT_FOUND;
     }
     if (client->server->debug)
         printf("Handshake response from ID %ld: %s\n", client->id, buffer);
     if (strcasecmp(buffer, "ERROR") == 0) {
         client->handshake = HANDSHAKE_DONE;
-        return COMMAND_FAILURE;
+        return HANDSHAKE_RESPONSE_NOT_FOUND;
     }
     return execute_handshake_response(client);
 }
@@ -99,14 +100,16 @@ static command_status_t handle_client_command(client_t *client, char *buffer)
 void handle_connection(struct pollfd *fd, client_t *client)
 {
     char *buffer = read_socket(client);
-    command_status_t result;
+    command_status_t command_result;
+    handshake_response_status_t handshake_response_result;
 
     if (!buffer)
         return;
-    result = handle_handshake_response(client, buffer);
-    if (result == COMMAND_NOT_FOUND)
-        result = handle_client_command(client, buffer);
-    if (result == COMMAND_QUIT) {
+    handshake_response_result = handle_handshake_response(client, buffer);
+    if (handshake_response_result == HANDSHAKE_RESPONSE_NOT_FOUND)
+        command_result = handle_client_command(client, buffer);
+    if (handshake_response_result == HANDSHAKE_RESPONSE_QUIT ||
+        command_result == COMMAND_QUIT) {
         dprintf(fd->fd, "Connection closed by server.\r\n");
         destroy_client(client, true);
         close(fd->fd);

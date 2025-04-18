@@ -77,5 +77,5 @@ handshake_response_status_t id_handshake_response(client_t *client)
     dprintf(client->client_sockfd, "MAP %ld %s\r\n",
         client->server->map->width, raw_map);
     free(raw_map);
-    return COMMAND_SUCCESS;
+    return HANDSHAKE_RESPONSE_SUCCESS;
 }

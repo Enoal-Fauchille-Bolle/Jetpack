@@ -115,12 +115,12 @@ handshake_response_status_t map_handshake_response(client_t *client)
     size_t *ready_client_indexes = get_ready_client_ids(client->server);
 
     if (!client_indexes)
-        return COMMAND_FAILURE;
+        return HANDSHAKE_RESPONSE_FAILURE;
     client->handshake = WAITING_FOR_LOBBY_OK;
     dprintf(client->client_sockfd, "LOBBY ");
     display_lobby_ids(
         client->client_sockfd, client_indexes, ready_client_indexes);
     free(client_indexes);
     free(ready_client_indexes);
-    return COMMAND_SUCCESS;
+    return HANDSHAKE_RESPONSE_SUCCESS;
 }

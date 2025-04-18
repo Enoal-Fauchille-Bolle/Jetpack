@@ -34,9 +34,6 @@ command_t *parse_buffer(char *buffer);
 // Command Executor
 command_status_t execute_command(command_t *command, client_t *client);
 
-// Handshake Response Executor
-command_status_t execute_handshake_response(client_t *client);
-
 // Commands
 command_status_t quit_command(command_t *command, client_t *client);
 command_status_t ready_command(command_t *command, client_t *client);
