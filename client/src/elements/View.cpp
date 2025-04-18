@@ -7,66 +7,41 @@
 
 #include "View.hpp"
 
-/**
- * @brief Construct a new View:: View object
- */
 View::View()
 {
+    sf::View view;
+    view.setSize(1920, 1080);
+    view.setCenter(960, 540);
+    view.setViewport(sf::FloatRect(0, 0, 1, 1));
+    _view = view;
 }
 
-/**
- * @brief Destroy the View:: View object
- */
 View::~View()
 {
 }
 
-/**
- * @brief Initialize the View object
- *
- * This function initializes the View object. It is currently empty and does not perform any operations.
- *
- * @param message The message to parse for view initialization.
- */
 void View::init(std::string message)
 {
     (void)message;
-    // Todo
 }
 
-/**
- * @brief Update the View object
- *
- * This function updates the View object. It is currently empty and does not perform any operations.
- *
- * @param deltaTime The time elapsed since the last update.
- */
-void View::update(float deltaTime)
+void View::update(float deltaTime, const DittoParam& param)
 {
     (void)deltaTime;
-    // Todo
+    auto [playerId, posX, posY, isFly] = std::get<std::tuple<int, float, float, bool>>(param);
+    sf::Vector2f newPos(540, posY);
+    _view.setCenter(newPos);
+    _view.setSize(1920, 1080);
+    _view.setRotation(0);
 }
 
-/**
- * @brief Draw the View object
- *
- * This function draws the View object. It is currently empty and does not perform any operations.
- *
- * @param window The window to draw the View object on.
- */
 void View::draw(sf::RenderWindow& window)
 {
-    (void)window;
-    // Todo
+    window.setView(_view);
+    window.clear(sf::Color(0, 0, 0));
+    window.display();
 }
 
-/**
- * @brief Check if the View object is initialized
- *
- * This function checks if the View object is initialized. It currently returns false.
- *
- * @return true if the View object is initialized, false otherwise.
- */
 bool View::isInit() const
 {
     return false;

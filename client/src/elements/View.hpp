@@ -16,7 +16,7 @@ class View : public IElement {
         ~View();
 
         void init(std::string message) override;
-        void update(float deltaTime) override;
+        void update(float deltaTime,const DittoParam &param) override;
         void draw(sf::RenderWindow& window) override;
         bool isInit() const override;
 
