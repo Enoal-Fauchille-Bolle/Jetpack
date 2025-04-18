@@ -5,9 +5,9 @@
 ** Map Parser
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "map.h"
 
@@ -90,7 +90,8 @@ static int read_map_lines(FILE *file, map_t *map)
 {
     char buffer[BUFFER_SIZE];
 
-    for (int i = 0; fgets(buffer, sizeof(buffer), file) != NULL; i++) {
+    for (int i = MAP_MAX_HEIGHT - 1;
+        fgets(buffer, sizeof(buffer), file) != NULL; i--) {
         map->map[i] = strdup(buffer);
         if (map->map[i] == NULL)
             return 0;

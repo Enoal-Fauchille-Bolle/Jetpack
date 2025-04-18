@@ -11,6 +11,7 @@
 
 #include "commands.h"
 #include "server.h"
+#include "collisions.h"
 
 /**
  * @brief Debug function to display player information.
@@ -144,88 +145,6 @@ static void check_end(server_t *server)
     if (get_alive_players(server) == 1) {
         server->game->game_state = GAME_END;
         end_command(server, get_alive_player_id(server));
-    }
-}
-
-static void check_player_collision(server_t *server, player_t *player)
-{
-    float center_x = server->game->x;
-    float center_y = player->y;
-
-    // Compute the player's hitbox boundaries using intervals.
-    float hitbox_x_min = center_x - 1.0;
-    float hitbox_x_max = center_x + 1.0;
-    float hitbox_y_min = center_y - 1.0;
-    float hitbox_y_max = center_y + 1.0;
-
-    // Determine candidate grid indices (using floor/ceil only to iterate the
-    // map).
-    int col_start = (int)floor(hitbox_x_min);
-    int col_end = (int)ceil(hitbox_x_max) - 1;
-    int row_start = (int)floor(hitbox_y_min);
-    int row_end = (int)ceil(hitbox_y_max) - 1;
-
-    // Clamp indices within the map limits.
-    if (col_start < 0)
-        col_start = 0;
-    if (row_start < 0)
-        row_start = 0;
-    if (col_end >= (int)server->map->width)
-        col_end = (int)server->map->width - 1;
-    if (row_end >= MAP_MAX_HEIGHT)
-        row_end = MAP_MAX_HEIGHT - 1;
-
-    printf(
-        "Player %p: Checking collision in hitbox x:[%f, %f], y:[%f, %f] => "
-        "grid [%d, %d] to [%d, %d]\n",
-        player, hitbox_x_min, hitbox_x_max, hitbox_y_min, hitbox_y_max,
-        row_start, col_start, row_end, col_end);
-
-    // Check each cell in the candidate grid range.
-    for (int r = row_start; r <= row_end; r++) {
-        for (int c = col_start; c <= col_end; c++) {
-            // Each cell represents the interval [c, c+1] for x and [r, r+1]
-            // for y. Check if these intervals overlap with the player's
-            // hitbox.
-            printf("Hitbox: [%f, %f] x [%f, %f]\n", hitbox_x_min, hitbox_x_max,
-                hitbox_y_min, hitbox_y_max);
-            printf("Cell: [%d, %d] x [%d, %d]\n", c, c + 1, r, r + 1);
-            printf("%c\n", server->map->map[r][c]);
-            if (hitbox_x_min < (c + 1) && hitbox_x_max > c &&
-                hitbox_y_min < (r + 1) && hitbox_y_max > r) {
-                char cell = server->map->map[r][c];
-                if (cell == 'e') {
-                    // Obstacle collision: mark player as not alive and record
-                    // death position.
-                    player->alive = false;
-                    player->death_x_pos = server->game->x;
-                    return;
-                }
-            }
-        }
-    }
-
-    // Process coin collisions (after no obstacle collision was found).
-    for (int r = row_start; r <= row_end; r++) {
-        for (int c = col_start; c <= col_end; c++) {
-            if (hitbox_x_min < (c + 1) && hitbox_x_max > c &&
-                hitbox_y_min < (r + 1) && hitbox_y_max > r) {
-                if (server->map->map[r][c] == 'c') {
-                    player->score++;
-                    server->map->map[r][c] = ' ';
-                }
-            }
-        }
-    }
-}
-
-static void check_collisions(server_t *server)
-{
-    for (int i = 0; i < MAX_CLIENTS; i++) {
-        if (server->clients[i].client_sockfd == -1 ||
-            !server->clients[i].player)
-            continue;
-        check_player_collision(server, server->clients[i].player);
     }
 }
 

@@ -114,7 +114,6 @@ void handle_connection(struct pollfd *fd, client_t *client)
         command_result = handle_client_command(client, buffer);
     if (handshake_response_result == HANDSHAKE_RESPONSE_QUIT ||
         command_result == COMMAND_QUIT) {
-        dprintf(fd->fd, "Connection closed by server.\r\n");
         destroy_client(client, true);
         close(fd->fd);
         fd->fd = -1;

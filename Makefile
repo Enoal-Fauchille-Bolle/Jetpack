@@ -26,6 +26,7 @@ SRC_SERVER  =   $(SERVER_DIR)/$(SRC_DIR)/main.c			  \
 				$(SERVER_DIR)/$(SRC_DIR)/client_handler.c	  \
 				$(SERVER_DIR)/$(SRC_DIR)/socket.c			  \
 				$(SERVER_DIR)/$(SRC_DIR)/game.c				\
+				$(SERVER_DIR)/$(SRC_DIR)/collisions.c				\
 				$(SERVER_DIR)/$(SRC_DIR)/command_parser.c	  \
 				$(SERVER_DIR)/$(SRC_DIR)/command_executor.c	\
 				$(SERVER_DIR)/$(SRC_DIR)/handshake_response_executor.c  \

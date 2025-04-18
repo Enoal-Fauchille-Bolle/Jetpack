@@ -98,17 +98,6 @@ static int jetpack_server(int port, char *path, bool debug)
     if (!server || server->sockfd == 0)
         return 84;
     server->map = map_parser(path);
-
-    // if (server->debug) {
-    //     for (int i = 0; i < MAP_MAX_HEIGHT; i++) {
-    //         for (size_t j = 0; j < server->map->width; j++) {
-    //             printf("x: %ld, y: %d, char: %c\n",
-    //                 j, i, server->map->map[i][j]);
-    //         }
-    //         printf("\n");
-    //     }
-    // }
-
     if (server->map == NULL || server->map->width == 0) {
         puts("Error: Failed to parse map");
         close(server->sockfd);
