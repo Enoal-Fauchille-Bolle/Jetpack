@@ -13,6 +13,16 @@
 #include "commands.h"
 #include "destroyers.h"
 
+/**
+ * @brief Read a line from the socket stream.
+ *
+ * This function reads a line from the socket stream associated with the
+ * client and returns it as a string. The caller is responsible for freeing
+ * the allocated memory.
+ *
+ * @param client The client structure containing the socket stream.
+ * @return char* The read line, or NULL on error.
+ */
 static char *read_socket(client_t *client)
 {
     char *line = NULL;
@@ -29,6 +39,16 @@ static char *read_socket(client_t *client)
     return line;
 }
 
+/**
+ * @brief Handle the handshake response from the client.
+ *
+ * This function processes the handshake response from the client and
+ * executes the appropriate action based on the response.
+ *
+ * @param client The client structure.
+ * @param buffer The buffer containing the handshake response.
+ * @return command_status_t The status of the handshake response.
+ */
 static command_status_t handle_handshake_response(
     client_t *client, char *buffer)
 {
@@ -44,6 +64,16 @@ static command_status_t handle_handshake_response(
     return execute_handshake_response(client);
 }
 
+/**
+ * @brief Handle the client command.
+ *
+ * This function processes the command received from the client and
+ * executes it.
+ *
+ * @param client The client structure.
+ * @param buffer The buffer containing the command.
+ * @return command_status_t The status of the command execution.
+ */
 static command_status_t handle_client_command(client_t *client, char *buffer)
 {
     command_status_t result = COMMAND_NOT_FOUND;
@@ -57,6 +87,15 @@ static command_status_t handle_client_command(client_t *client, char *buffer)
     return result;
 }
 
+/**
+ * @brief Handle the connection for a client.
+ *
+ * This function processes the connection events for a client and
+ * handles the handshake response and client commands.
+ *
+ * @param fd The poll file descriptor for the client.
+ * @param client The client structure.
+ */
 void handle_connection(struct pollfd *fd, client_t *client)
 {
     char *buffer = read_socket(client);

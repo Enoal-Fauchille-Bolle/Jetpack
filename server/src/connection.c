@@ -17,6 +17,17 @@
 #include "connection.h"
 #include "destroyers.h"
 
+/**
+ * @brief Initialize a client structure.
+ *
+ * This function initializes a client structure with the provided server,
+ * socket file descriptor, and client address.
+ *
+ * @param server The server structure.
+ * @param client_sockfd The socket file descriptor for the client.
+ * @param client_addr The address of the client.
+ * @return client_t The initialized client structure.
+ */
 static client_t init_client(
     server_t *server, int client_sockfd, struct sockaddr_in *client_addr)
 {
@@ -41,6 +52,15 @@ static client_t init_client(
     return client;
 }
 
+/**
+ * @brief Initialize the poll file descriptors.
+ *
+ * This function initializes the poll file descriptors for the server
+ * socket and client sockets.
+ *
+ * @param fds The array of poll file descriptors.
+ * @param server_sockfd The socket file descriptor for the server.
+ */
 static void init_poll_fds(struct pollfd *fds, int server_sockfd)
 {
     for (int i = 0; i < MAX_CLIENTS + 1; i++) {
@@ -50,6 +70,17 @@ static void init_poll_fds(struct pollfd *fds, int server_sockfd)
     fds[0].events = POLLIN;
 }
 
+/**
+ * @brief Accept a new client connection.
+ *
+ * This function accepts a new client connection and initializes the
+ * client structure.
+ *
+ * @param server The server structure.
+ * @param clients The array of client structures.
+ * @param fds The array of poll file descriptors.
+ * @param max_fds The maximum number of file descriptors.
+ */
 static void accept_new_connection(
     server_t *server, client_t *clients, struct pollfd *fds, int max_fds)
 {
@@ -74,6 +105,16 @@ static void accept_new_connection(
     }
 }
 
+/**
+ * @brief Handle client connection events.
+ *
+ * This function processes the events for each client connection and
+ * handles the connection accordingly.
+ *
+ * @param fds The array of poll file descriptors.
+ * @param max_fds The maximum number of file descriptors.
+ * @param clients The array of client structures.
+ */
 static void process_client_events(
     struct pollfd *fds, int max_fds, client_t *clients)
 {
@@ -86,6 +127,17 @@ static void process_client_events(
     }
 }
 
+/**
+ * @brief Process the connection events.
+ *
+ * This function processes the connection events for the server and
+ * handles new connections and client events.
+ *
+ * @param server The server structure.
+ * @param fds The array of poll file descriptors.
+ * @param clients The array of client structures.
+ * @return int 0 on success, 1 on error.
+ */
 static int process_connection(
     server_t *server, struct pollfd *fds, client_t *clients)
 {
@@ -103,6 +155,15 @@ static int process_connection(
     return 0;
 }
 
+/**
+ * @brief Process the connections for the server.
+ *
+ * This function initializes the poll file descriptors and processes
+ * the connections for the server.
+ *
+ * @param server The server structure.
+ * @return int 0 on success, 1 on error.
+ */
 int process_connections(server_t *server)
 {
     struct pollfd fds[MAX_CLIENTS + 1];

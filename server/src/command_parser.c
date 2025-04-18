@@ -11,6 +11,14 @@
 #include "commands.h"
 #include "utils.h"
 
+/**
+ * @brief Initialize a command structure.
+ *
+ * This function allocates memory for a command structure and initializes
+ * its members to default values.
+ *
+ * @return command_t* Pointer to the initialized command structure.
+ */
 static command_t *init_command(void)
 {
     command_t *command = malloc(sizeof(command_t));
@@ -25,6 +33,15 @@ static command_t *init_command(void)
     return command;
 }
 
+/**
+ * @brief Count the number of arguments in a buffer.
+ *
+ * This function counts the number of space-separated arguments in a
+ * given buffer.
+ *
+ * @param buffer The input buffer containing the command line.
+ * @return int The number of arguments in the buffer.
+ */
 static int count_args(char *buffer)
 {
     int count = 0;
@@ -36,6 +53,16 @@ static int count_args(char *buffer)
     return count + 1;
 }
 
+/**
+ * @brief Tokenize a buffer into an array of strings.
+ *
+ * This function splits a buffer into tokens based on spaces and
+ * returns an array of strings.
+ *
+ * @param buffer The input buffer to tokenize.
+ * @param token_count The number of tokens to create.
+ * @return char** Pointer to the array of tokens.
+ */
 static char **tokenize_buffer(char *buffer, int token_count)
 {
     char **tokens = malloc(sizeof(char *) * (token_count + 1));
@@ -58,6 +85,16 @@ static char **tokenize_buffer(char *buffer, int token_count)
     return tokens;
 }
 
+/**
+ * @brief Set up the command structure with the parsed tokens.
+ *
+ * This function initializes the command structure with the command name,
+ * argument count, and argument values.
+ *
+ * @param command The command structure to set up.
+ * @param tokens The array of tokens parsed from the buffer.
+ * @param token_count The number of tokens in the array.
+ */
 static void setup_command(command_t *command, char **tokens, int token_count)
 {
     command->argc = token_count - 1;
@@ -65,6 +102,15 @@ static void setup_command(command_t *command, char **tokens, int token_count)
     command->argv = tokens + 1;
 }
 
+/**
+ * @brief Parse a buffer into a command structure.
+ *
+ * This function takes a buffer containing a command line, parses it,
+ * and returns a command structure with the command name and arguments.
+ *
+ * @param buffer The input buffer containing the command line.
+ * @return command_t* Pointer to the parsed command structure.
+ */
 command_t *parse_buffer(char *buffer)
 {
     command_t *command = init_command();

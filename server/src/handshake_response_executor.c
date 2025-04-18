@@ -15,6 +15,16 @@ const handshake_response_handler_t handshake_response_handlers[] = {
     {WAITING_FOR_LOBBY_OK, lobby_handshake_response},
     {WAITING_FOR_START_OK, start_handshake_response}, {HANDSHAKE_DONE, NULL}};
 
+/**
+ * @brief Get the handshake response handler for the current state.
+ *
+ * This function iterates through the handshake_response_handlers array
+ * to find the appropriate handler for the current handshake state of the
+ * client.
+ *
+ * @param client The client structure containing the current handshake state.
+ * @return handshake_response_handler_t The handler for the current state.
+ */
 static handshake_response_handler_t get_handshake_response_handler(
     client_t *client)
 {
@@ -29,6 +39,15 @@ static handshake_response_handler_t get_handshake_response_handler(
     return (handshake_response_handler_t){HANDSHAKE_DONE, NULL};
 }
 
+/**
+ * @brief Execute the handshake response for the client.
+ *
+ * This function retrieves the appropriate handshake response handler
+ * based on the client's current handshake state and executes it.
+ *
+ * @param client The client structure containing the current handshake state.
+ * @return handshake_response_status_t The status of the handshake response.
+ */
 handshake_response_status_t execute_handshake_response(client_t *client)
 {
     handshake_response_handler_t handler = {0};

@@ -5,12 +5,21 @@
 ** QUIT Command
 */
 
-#include "client.h"
-#include "server.h"
-#include "commands.h"
-
 #include <stdlib.h>
 
+#include "client.h"
+#include "commands.h"
+#include "server.h"
+
+/**
+ * @brief Get the IDs of all clients in the server.
+ *
+ * This function retrieves the IDs of all connected clients in the server
+ * and returns them as an array of size_t.
+ *
+ * @param server The server structure containing client information.
+ * @return size_t* Pointer to an array of client IDs, or NULL on error.
+ */
 static size_t *get_client_ids(server_t *server)
 {
     size_t count = 0;
@@ -33,6 +42,15 @@ static size_t *get_client_ids(server_t *server)
     return client_indexes;
 }
 
+/**
+ * @brief Get the IDs of all ready clients in the server.
+ *
+ * This function retrieves the IDs of all ready clients in the server
+ * and returns them as an array of size_t.
+ *
+ * @param server The server structure containing client information.
+ * @return size_t* Pointer to an array of ready client IDs, or NULL on error.
+ */
 static size_t *get_ready_client_ids(server_t *server)
 {
     size_t count = 0;
@@ -56,6 +74,16 @@ static size_t *get_ready_client_ids(server_t *server)
     return client_indexes;
 }
 
+/**
+ * @brief Display the lobby IDs to the client.
+ *
+ * This function sends the IDs of all clients and ready clients in the
+ * lobby to the specified client socket.
+ *
+ * @param client_sockfd The socket file descriptor of the client.
+ * @param client_indexes The array of client IDs.
+ * @param ready_client_indexes The array of ready client IDs.
+ */
 static void display_lobby_ids(
     int client_sockfd, size_t *client_indexes, size_t *ready_client_indexes)
 {
@@ -73,6 +101,15 @@ static void display_lobby_ids(
     dprintf(client_sockfd, "\n");
 }
 
+/**
+ * @brief Send the lobby information to the client.
+ *
+ * This function sends the lobby information, including client IDs and
+ * ready client IDs, to the specified client socket.
+ *
+ * @param client The client structure.
+ * @param clientfd The socket file descriptor of the client.
+ */
 static void send_lobby(client_t *client, int clientfd)
 {
     size_t *client_indexes = get_client_ids(client->server);
@@ -87,6 +124,14 @@ static void send_lobby(client_t *client, int clientfd)
     free(ready_client_indexes);
 }
 
+/**
+ * @brief Send the lobby information to all other clients.
+ *
+ * This function sends the lobby information to all clients except the
+ * specified client.
+ *
+ * @param client The client structure.
+ */
 static void send_lobby_to_others(client_t *client)
 {
     for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -98,6 +143,13 @@ static void send_lobby_to_others(client_t *client)
     }
 }
 
+/**
+ * @brief Send the start command to all clients.
+ *
+ * This function sends the START command to all clients in the server.
+ *
+ * @param server The server structure containing client information.
+ */
 static void send_start(server_t *server)
 {
     for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -108,6 +160,14 @@ static void send_start(server_t *server)
     }
 }
 
+/**
+ * @brief Check if the game can start based on the number of ready clients.
+ *
+ * This function checks if the game can start based on the number of
+ * ready clients and sends the START command if conditions are met.
+ *
+ * @param server The server structure containing client information.
+ */
 static void check_game_start(server_t *server)
 {
     size_t count = 0;
@@ -126,6 +186,17 @@ static void check_game_start(server_t *server)
     }
 }
 
+/**
+ * @brief Handle the READY command.
+ *
+ * This function handles the READY command from the client and updates
+ * the client's state accordingly.
+ *
+ * @param command The command structure containing the command name and
+ * arguments.
+ * @param client The client structure associated with the command.
+ * @return command_status_t The status of the command execution.
+ */
 command_status_t ready_command(command_t *command, client_t *client)
 {
     (void)command;

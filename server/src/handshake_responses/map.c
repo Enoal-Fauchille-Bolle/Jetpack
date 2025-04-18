@@ -11,6 +11,15 @@
 #include "handshake_responses.h"
 #include "server.h"
 
+/**
+ * @brief Get the IDs of all clients in the server.
+ *
+ * This function retrieves the IDs of all connected clients in the server
+ * and returns them as an array of size_t.
+ *
+ * @param server The server structure containing client information.
+ * @return size_t* Pointer to an array of client IDs, or NULL on error.
+ */
 static size_t *get_client_ids(server_t *server)
 {
     size_t count = 0;
@@ -33,6 +42,15 @@ static size_t *get_client_ids(server_t *server)
     return client_indexes;
 }
 
+/**
+ * @brief Get the IDs of all ready clients in the server.
+ *
+ * This function retrieves the IDs of all ready clients in the server
+ * and returns them as an array of size_t.
+ *
+ * @param server The server structure containing client information.
+ * @return size_t* Pointer to an array of ready client IDs, or NULL on error.
+ */
 static size_t *get_ready_client_ids(server_t *server)
 {
     size_t count = 0;
@@ -56,6 +74,15 @@ static size_t *get_ready_client_ids(server_t *server)
     return client_indexes;
 }
 
+/**
+ * @brief Send the lobby information to the client.
+ *
+ * This function sends the lobby information, including client IDs and
+ * ready client IDs, to the specified client socket.
+ *
+ * @param client The client structure.
+ * @param clientfd The socket file descriptor of the client.
+ */
 static void display_lobby_ids(
     int client_sockfd, size_t *client_indexes, size_t *ready_client_indexes)
 {
@@ -73,6 +100,15 @@ static void display_lobby_ids(
     dprintf(client_sockfd, "\n");
 }
 
+/**
+ * @brief Handle the lobby handshake response from the client.
+ *
+ * This function processes the lobby handshake response from the client
+ * and sends the lobby information to all clients.
+ *
+ * @param client The client structure associated with the handshake response.
+ * @return handshake_response_status_t The status of the handshake response.
+ */
 handshake_response_status_t map_handshake_response(client_t *client)
 {
     size_t *client_indexes = get_client_ids(client->server);

@@ -17,6 +17,16 @@
 #include "client.h"
 #include "server.h"
 
+/**
+ * @brief Destroy the server and free allocated resources.
+ *
+ * This function closes all client connections, frees the map memory,
+ * and closes the server socket.
+ *
+ * @param server The server structure to destroy.
+ * @param fds The array of poll file descriptors.
+ * @param client The array of client structures.
+ */
 void destroy_server(server_t *server, struct pollfd *fds, client_t *client)
 {
     for (int i = 1; i < MAX_CLIENTS + 1; i++) {
@@ -30,6 +40,15 @@ void destroy_server(server_t *server, struct pollfd *fds, client_t *client)
     close(server->sockfd);
 }
 
+/**
+ * @brief Destroy a client and free allocated resources.
+ *
+ * This function closes the client connection and frees the memory
+ * associated with the client structure.
+ *
+ * @param client The client structure to destroy.
+ * @param verbose Boolean value indicating whether to print a message.
+ */
 void destroy_client(client_t *client, bool verbose)
 {
     if (client == NULL)
@@ -41,6 +60,14 @@ void destroy_client(client_t *client, bool verbose)
     fclose(client->stream);
 }
 
+/**
+ * @brief Destroy a command and free allocated resources.
+ *
+ * This function frees the memory associated with the command structure
+ * and its arguments.
+ *
+ * @param command The command structure to destroy.
+ */
 void destroy_command(command_t *command)
 {
     char **tokens = NULL;

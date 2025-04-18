@@ -5,12 +5,22 @@
 ** Get Server Options
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "options.h"
 
+/**
+ * @brief Handle the port option.
+ *
+ * This function sets the port number for the server options.
+ *
+ * @param opts The server options structure.
+ * @param i The index of the current argument.
+ * @param ac The total number of arguments.
+ * @param av The array of arguments.
+ */
 static void handle_port(server_options_t *opts, int *i, int ac, char **av)
 {
     if (*i + 1 < ac) {
@@ -19,6 +29,16 @@ static void handle_port(server_options_t *opts, int *i, int ac, char **av)
     }
 }
 
+/**
+ * @brief Handle the map option.
+ *
+ * This function sets the map path for the server options.
+ *
+ * @param opts The server options structure.
+ * @param i The index of the current argument.
+ * @param ac The total number of arguments.
+ * @param av The array of arguments.
+ */
 static void handle_map(server_options_t *opts, int *i, int ac, char **av)
 {
     if (*i + 1 < ac) {
@@ -28,6 +48,16 @@ static void handle_map(server_options_t *opts, int *i, int ac, char **av)
     }
 }
 
+/**
+ * @brief Handle the debug option.
+ *
+ * This function sets the debug mode for the server options.
+ *
+ * @param opts The server options structure.
+ * @param i The index of the current argument.
+ * @param ac The total number of arguments.
+ * @param av The array of arguments.
+ */
 static void handle_debug(server_options_t *opts, int *i, int ac, char **av)
 {
     (void)i;
@@ -36,6 +66,16 @@ static void handle_debug(server_options_t *opts, int *i, int ac, char **av)
     opts->debug = 1;
 }
 
+/**
+ * @brief Handle the help option.
+ *
+ * This function sets the help mode for the server options.
+ *
+ * @param opts The server options structure.
+ * @param i The index of the current argument.
+ * @param ac The total number of arguments.
+ * @param av The array of arguments.
+ */
 static void handle_help(server_options_t *opts, int *i, int ac, char **av)
 {
     (void)i;
@@ -44,6 +84,16 @@ static void handle_help(server_options_t *opts, int *i, int ac, char **av)
     opts->help = 1;
 }
 
+/**
+ * @brief Find the option handler for a given argument.
+ *
+ * This function searches for the option handler corresponding to the
+ * provided argument.
+ *
+ * @param arg The argument to search for.
+ * @return const option_map_t* Pointer to the option map entry, or NULL if not
+ * found.
+ */
 static const option_map_t *find_option(const char *arg)
 {
     static const option_map_t option_map[] = {{"-p", handle_port},
@@ -58,6 +108,16 @@ static const option_map_t *find_option(const char *arg)
     return NULL;
 }
 
+/**
+ * @brief Get the server options from command-line arguments.
+ *
+ * This function parses the command-line arguments and sets the server
+ * options accordingly.
+ *
+ * @param ac The total number of arguments.
+ * @param av The array of arguments.
+ * @return server_options_t The server options structure.
+ */
 server_options_t get_server_options(int ac, char **av)
 {
     server_options_t opts = {
