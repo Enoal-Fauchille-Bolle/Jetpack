@@ -201,15 +201,15 @@ command_status_t ready_command(command_t *command, client_t *client)
 {
     (void)command;
     if (client->handshake != HANDSHAKE_DONE) {
-        dprintf(client->client_sockfd, "ERROR: Not accepting ready now\r\n");
+        dprintf(client->client_sockfd, "ERROR Not accepting ready now\r\n");
         return COMMAND_FAILURE;
     }
     if (client->server->game_state != GAME_START) {
-        dprintf(client->client_sockfd, "ERROR: Not accepting ready now\r\n");
+        dprintf(client->client_sockfd, "ERROR Not accepting ready now\r\n");
         return COMMAND_FAILURE;
     }
     if (client->ready) {
-        dprintf(client->client_sockfd, "ERROR: Already ready\r\n");
+        dprintf(client->client_sockfd, "ERROR Already ready\r\n");
         return COMMAND_FAILURE;
     }
     client->ready = true;
