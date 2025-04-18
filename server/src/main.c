@@ -6,6 +6,10 @@
 */
 
 #include "server.h"
+#include "options.h"
+#include "connection.h"
+
+#include <unistd.h>
 
 static void set_read(bool a)
 {

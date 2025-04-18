@@ -5,7 +5,11 @@
 ** Get Server Options
 */
 
-#include "server.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+#include "options.h"
 
 static void handle_port(server_options_t *opts, int *i, int ac, char **av)
 {

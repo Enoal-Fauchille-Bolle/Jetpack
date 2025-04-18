@@ -5,7 +5,12 @@
 ** Command Executor
 */
 
+#include <string.h>
+
 #include "server.h"
+#include "client.h"
+#include "commands.h"
+#include "utils.h"
 
 const command_handler_t command_handlers[] = {
     {"QUIT", quit_command}, {"READY", ready_command}, {NULL, NULL}};

@@ -5,7 +5,13 @@
 ** Client Handler File
 */
 
-#include "server.h"
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <poll.h>
+
+#include "commands.h"
+#include "destroyers.h"
 
 static char *read_socket(client_t *client)
 {
@@ -30,9 +36,7 @@ static command_status_t handle_handshake_response(
         return COMMAND_NOT_FOUND;
     }
     if (client->server->debug)
-        printf("Handshake response from %s:%d: %s\n",
-            inet_ntoa(client->client_addr->sin_addr),
-            ntohs(client->client_addr->sin_port), buffer);
+        printf("Handshake response from ID %ld: %s\n", client->id, buffer);
     if (strcasecmp(buffer, "ERROR") == 0) {
         client->handshake = HANDSHAKE_DONE;
         return COMMAND_FAILURE;
@@ -46,9 +50,7 @@ static command_status_t handle_client_command(client_t *client, char *buffer)
     command_t *command = NULL;
 
     if (client->server->debug)
-        printf("Command from %s:%d: %s\n",
-            inet_ntoa(client->client_addr->sin_addr),
-            ntohs(client->client_addr->sin_port), buffer);
+        printf("Command from ID %ld: %s\n", client->id, buffer);
     command = parse_buffer(buffer);
     result = execute_command(command, client);
     destroy_command(command);

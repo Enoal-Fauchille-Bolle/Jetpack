@@ -5,7 +5,12 @@
 ** Map Parser
 */
 
-#include "server.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+#include "map.h"
+// #include "server.h"
 
 static int check_map_height(FILE *file)
 {

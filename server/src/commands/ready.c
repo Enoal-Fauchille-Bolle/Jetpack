@@ -5,7 +5,11 @@
 ** QUIT Command
 */
 
+#include "client.h"
 #include "server.h"
+#include "commands.h"
+
+#include <stdlib.h>
 
 static size_t *get_client_ids(server_t *server)
 {

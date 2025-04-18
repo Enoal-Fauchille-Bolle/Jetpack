@@ -5,7 +5,10 @@
 ** Socket File
 */
 
+#include <stdlib.h>
+
 #include "server.h"
+#include "connection.h"
 
 static int listen_socket(int server_sockfd)
 {

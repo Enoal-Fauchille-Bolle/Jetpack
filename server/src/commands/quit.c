@@ -5,7 +5,8 @@
 ** QUIT Command
 */
 
-#include "server.h"
+#include "client.h"
+#include "commands.h"
 
 command_status_t quit_command(command_t *command, client_t *client)
 {

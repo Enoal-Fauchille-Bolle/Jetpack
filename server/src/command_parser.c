@@ -5,7 +5,11 @@
 ** Command Parser
 */
 
-#include "server.h"
+#include <stdlib.h>
+#include <string.h>
+
+#include "commands.h"
+#include "utils.h"
 
 static command_t *init_command(void)
 {

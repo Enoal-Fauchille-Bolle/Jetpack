@@ -5,6 +5,10 @@
 ** ID Handshake Response
 */
 
+#include <stdlib.h>
+
+#include "handshake_responses.h"
+#include "map.h"
 #include "server.h"
 
 static void get_raw_map_line(char *raw_map, map_t *map, int row, int *pos)
@@ -36,7 +40,7 @@ static char *get_raw_map(map_t *map)
     return raw_map;
 }
 
-command_status_t id_handshake_response(client_t *client)
+handshake_response_status_t id_handshake_response(client_t *client)
 {
     char *raw_map = get_raw_map(client->server->map);
 

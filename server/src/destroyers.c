@@ -5,10 +5,19 @@
 ** Destroyers File
 */
 
+#include "destroyers.h"
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <poll.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include "client.h"
 #include "server.h"
 
-void destroy_server(
-    server_t *server, struct pollfd *fds, client_t *client)
+void destroy_server(server_t *server, struct pollfd *fds, client_t *client)
 {
     for (int i = 1; i < MAX_CLIENTS + 1; i++) {
         if (fds[i].fd >= 0) {

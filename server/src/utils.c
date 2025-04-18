@@ -5,8 +5,11 @@
 ** Utilities
 */
 
-#include "server.h"
+#include <string.h>
+#include <ctype.h>
 
+/**
+ * @brief Convert a string to uppercase.
 char *touppercase(char *str)
 {
     if (str == NULL) {

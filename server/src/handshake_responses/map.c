@@ -5,6 +5,10 @@
 ** MAP Handshake Response
 */
 
+#include <stdlib.h>
+
+#include "client.h"
+#include "handshake_responses.h"
 #include "server.h"
 
 static size_t *get_client_ids(server_t *server)
@@ -69,7 +73,7 @@ static void display_lobby_ids(
     dprintf(client_sockfd, "\n");
 }
 
-command_status_t map_handshake_response(client_t *client)
+handshake_response_status_t map_handshake_response(client_t *client)
 {
     size_t *client_indexes = get_client_ids(client->server);
     size_t *ready_client_indexes = get_ready_client_ids(client->server);

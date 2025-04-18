@@ -5,7 +5,9 @@
 ** Command Executor
 */
 
+#include "client.h"
 #include "server.h"
+#include "handshake_responses.h"
 
 const handshake_response_handler_t handshake_response_handlers[] = {
     {WAITING_FOR_ID_OK, id_handshake_response},
@@ -27,16 +29,19 @@ static handshake_response_handler_t get_handshake_response_handler(
     return (handshake_response_handler_t){HANDSHAKE_DONE, NULL};
 }
 
-command_status_t execute_handshake_response(client_t *client)
+handshake_response_status_t execute_handshake_response(client_t *client)
 {
     handshake_response_handler_t handler = {0};
+    handshake_state_t old_state = client->handshake;
 
     handler = get_handshake_response_handler(client);
     client->handshake = HANDSHAKE_DONE;
     if (!handler.handler) {
-        if (client->server->debug)
+        if (client->server->debug && old_state != HANDSHAKE_DONE)
             printf("No Handshake Response Handler for state %d\n",
                 client->handshake);
+        if (client->server->debug)
+            printf("No Handshake\n");
         return COMMAND_FAILURE;
     }
     return handler.handler(client);

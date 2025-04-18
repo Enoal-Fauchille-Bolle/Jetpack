@@ -6,8 +6,16 @@
 */
 
 #include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 
 #include "server.h"
+#include "connection.h"
+#include "destroyers.h"
 
 static client_t init_client(
     server_t *server, int client_sockfd, struct sockaddr_in *client_addr)
