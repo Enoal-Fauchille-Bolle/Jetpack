@@ -10,7 +10,7 @@
 
     #include <iostream>
 
-    #include "Client.hpp"
+    #include "ClientHandler.hpp"
     #include "GameManager.hpp"
     #include "elements/Coin.hpp"
     #include "elements/Map.hpp"
@@ -19,7 +19,7 @@
 
 class Game {
     public:
-        Game();
+        Game(char *ip, int port);
         ~Game();
 
         void setupServer(void);
@@ -28,6 +28,8 @@ class Game {
 
     private:
         GameManager gameManager;
+
+        sf::RenderWindow window;
 };
 
 #endif /* !GAME_HPP_ */

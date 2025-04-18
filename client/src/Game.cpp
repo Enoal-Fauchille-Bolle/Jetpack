@@ -7,44 +7,41 @@
 
 #include "Game.hpp"
 
-/**
- * @brief Construct a new Game:: Game object
- *
- * This function initializes the game manager and adds game objects to it.
- */
-Game::Game()
+Game::Game(char *ip, int port) : gameManager(ip, port)
 {
+
+    window.create(sf::VideoMode(800, 600), "Jetpack Client");
+    window.setFramerateLimit(60);
+    window.setKeyRepeatEnabled(false);
+
     gameManager.addObject("Player", std::make_unique<PlayerList>());
     gameManager.addObject("Map", std::make_unique<Map>());
     gameManager.addObject("Coin", std::make_unique<Coin>());
     gameManager.addObject("View", std::make_unique<View>());
 }
 
-/**
- * @brief Destroy the Game:: Game object
- */
 Game::~Game()
 {
 }
 
-/**
- * @brief Run the game loop
- *
- * This function runs the game loop, updating and drawing all game objects.
- */
 void Game::setupServer(void)
 {
-    while (gameManager.isGameStarted() == false) {
-        gameManager.setup();
-        gameManager.initObjects();
-    }
+    gameManager.setup();
+    gameManager.initObjects();
 }
 
-/**
- * @brief Run the game
- *
- * This function runs the game loop, updating and drawing all game objects.
- */
-void Game::runGame(void) {
-    // Todo
+void Game::runGame(void)
+{
+    sf::Clock clock;
+
+    while (window.isOpen()) {
+        if (gameManager.isGameStarted() == false) {
+            setupServer();
+        } else {
+            sf::Time deltaTime = clock.restart();
+            gameManager.updateAll(deltaTime.asSeconds());
+            gameManager.drawAll(window);
+            window.display();
+        }
+    }
 }
