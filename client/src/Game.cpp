@@ -39,6 +39,20 @@ void Game::setupServer(void)
 {
     gameManager.setup();
     gameManager.initObjects();
+    sf::Text text;
+    sf::Font font;
+    if (!font.loadFromFile("assets/jetpack_font.ttf")) {
+        std::cerr << "Error loading font" << std::endl;
+        return;
+    }
+    text.setFont(font);
+    text.setString("Waiting for players...");
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(10, 10);
+    window.draw(text);
+    window.display();
+    gameManager.handleEvent(window);
 }
 
 /**
@@ -55,6 +69,7 @@ void Game::runGame(void)
             sf::Time deltaTime = clock.restart();
             gameManager.updateAll(deltaTime.asSeconds());
             gameManager.drawAll(window);
+            window.clear(sf::Color(0, 0, 0));
             window.display();
         }
     }
